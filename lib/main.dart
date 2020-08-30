@@ -56,6 +56,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<UserCredential> signInWithGoogle() async {
 
+
     // Trigger the authentication flow
     final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
 
