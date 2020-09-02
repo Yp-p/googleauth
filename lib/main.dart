@@ -1,20 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+// import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:googleauth/screen/root_page.dart';
+import 'package:googleauth/screen/logInPage.dart';
 
 void main() {
   runApp(MyApp());
+  
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: RootPage(),
+    );
+  }
+}
+
+
+class One extends StatefulWidget {
 
   @override
-  _MyAppState createState() => _MyAppState();
+  _OneState createState() => _OneState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _OneState extends State<One> {
   @override
   void initState() {
     super.initState();
@@ -29,26 +42,26 @@ class _MyAppState extends State<MyApp> {
 
 
     // TODO: implement build
-    return MaterialApp(
-      home: SafeArea(
-        child: Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FlatButton(
-                  child: Text('Log in with Google'),
-                  color: Colors.teal,
-                  onPressed: signInWithGoogle,
-                ),
-                // FlatButton(
-                //   child: Text('Log in with Facebook'),
-                //   color: Colors.teal,
-                //   onPressed: signInWithFacebook,
-                // )
-              ],
+    return  Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            FlatButton(
+              child: Text('Log in with Google'),
+              color: Colors.teal,
+              onPressed: signInWithGoogle
+
             ),
-          ),
+            FlatButton(
+              child: Text('Log in with Facebook'),
+              color: Color(0xFFA5D6A7),
+              onPressed: (){
+                signInWithFacebook();
+
+              }
+            )
+          ],
         ),
       ),
     );
@@ -72,15 +85,55 @@ class _MyAppState extends State<MyApp> {
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
-//   Future<UserCredential> signInWithFacebook() async {
-//     // Trigger the sign-in flow
-//     final LoginResult result = await FacebookAuth.instance.login();
-//
-//     // Create a credential from the access token
-//     final FacebookAuthCredential facebookAuthCredential =
-//     FacebookAuthProvider.credential(result.accessToken.token);
-//
-//     // Once signed in, return the UserCredential
-//     return await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
-//   }
+  Future<UserCredential> signInWithFacebook() async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: "yy8@example.com",
+          password: "1yyyyyyyyyyyy"
+      );
+
+      FirebaseAuth.instance
+          .authStateChanges()
+          .listen((User user) {
+        if (user == null) {
+          print('User is currently signed out!');
+        } else {
+          print('User is signed in!');
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context)=>Three()
+          ));
+
+        }
+      });
+
+
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+
+  }
+
+
 }
+
+class Three extends StatefulWidget {
+  @override
+  _ThreeState createState() => _ThreeState();
+}
+
+class _ThreeState extends State<Three> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Three'),),
+    );
+  }
+}
+
+
