@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
   static List<Widget> _widgetOption = <Widget>[
     Text('1111111111'),
     CategoryItem(),
-    Division(),
+    CategoryItem(),
     Text('hhhh'),
   ];
 
@@ -33,9 +33,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        title: Text('ဘာညာကွိကွ'),
+        backgroundColor: gColor,
         elevation: 0,
-        iconTheme: IconThemeData(color: gColor),
+        // iconTheme: IconThemeData(color: gColor),
       ),
       body: _widgetOption.elementAt(_selectIndex),
       drawer: Drawer(
