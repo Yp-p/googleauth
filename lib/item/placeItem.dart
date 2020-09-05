@@ -1,29 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:googleauth/database/databaseHelper.dart';
 import 'package:googleauth/model/divisionModel.dart';
 import 'package:googleauth/model/placemodel.dart';
 import 'package:googleauth/page/placeDetail.dart';
 import 'package:googleauth/page/placeSelect.dart';
 class PlaceItem extends StatelessWidget {
-  const PlaceItem({
-    Key key,
-    @required List<PlaceModel> divisionList,
-  }) : _placeList = divisionList, super(key: key);
 
-  final List<PlaceModel> _placeList;
+  final String state;
+
+  const PlaceItem({Key key, this.state}) : super(key: key);
+
+
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
+    return FutureBuilder(
+      future: getStatePlaceDatabase(state),
+      builder: (BuildContext context, AsyncSnapshot snapshot){
+        if(snapshot.hasData){
+          return GridView.builder(
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
             maxCrossAxisExtent: 200, childAspectRatio: 1.3),
-        itemCount: _placeList.length,
+        itemCount: snapshot.data.length,
         itemBuilder: (context, index) {
-          PlaceModel placeModel = _placeList[index];
           return InkWell(
             onTap: (){
-              var division= placeModel.name;
+              var division= snapshot.data[index].placeName;
               Navigator.push(context, MaterialPageRoute(
-                builder: (context)=>PlaceDetail()
+                builder: (context)=>PlaceDetail(placeName: snapshot.data[index].placeName,)
               ));
               
             },
@@ -35,7 +39,7 @@ class PlaceItem extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Image.asset(
-                      placeModel.image,
+                    snapshot.data[index].image,
                       fit: BoxFit.cover,
 
 
@@ -50,8 +54,7 @@ class PlaceItem extends StatelessWidget {
 
                 Center(
                   child: Container(
-                    child: Text(
-                      placeModel.name,
+                    child: Text(snapshot.data[index].placeName,
                       style: TextStyle(
                           fontSize: 17,
                           color: Colors.white,
@@ -64,5 +67,11 @@ class PlaceItem extends StatelessWidget {
             ),
           );
         });
+
+        }else{
+          return Text('error');
+        }
+      },
+    );
   }
 }

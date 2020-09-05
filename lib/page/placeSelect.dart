@@ -29,7 +29,7 @@ class _PlaceSelectState extends State<PlaceSelect> {
         children: [
           Container(
               margin: EdgeInsets.only(top: 150),
-              child: PlaceItem(divisionList: _divisionList,)),
+              child: PlaceItem(state: widget.divName,)),
           Container(
             height: 140,
             width: MediaQuery.of(context).size.width,
