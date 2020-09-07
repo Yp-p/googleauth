@@ -5,6 +5,7 @@ import 'package:googleauth/const/constValue.dart';
 import 'package:googleauth/item/divisionItem.dart';
 import 'package:googleauth/model/divisionModel.dart';
 import 'package:googleauth/page/CategoryPage.dart';
+import 'package:googleauth/page/addPlace.dart';
 import 'package:googleauth/page/placeSelect.dart';
 
 
@@ -36,6 +37,14 @@ class _DivisionState extends State<Division> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      floatingActionButton: FlatButton(
+        onPressed: (){Navigator.push(context, MaterialPageRoute(
+          builder: (context)=>AddPlace()
+        ));},
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        color: gColor,
+        child: Text('နေရာအသစ် ထပ်ထည့်မည်', style: TextStyle(color: Colors.white),),
+      ),
       body: divisionItem(divisionList: _divisionList),
     );
 

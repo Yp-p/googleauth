@@ -90,7 +90,7 @@ class _PlaceDetailState extends State<PlaceDetail> {
                             onTap: (){print(temp);
                             print(weatherData['temp']);},
                           child: Image.asset(
-                            widget.placeName.image,
+                            widget.placeName.image==null?'images/bagan.jpg':widget.placeName.image,
                             height: 200,
                             fit: BoxFit.cover,
                             width: MediaQuery.of(context).size.width,
@@ -201,7 +201,7 @@ class DetailMonthsWidget extends StatelessWidget {
             ),
             Container(
               padding: EdgeInsets.all(10),
-              child: Text(months),
+              child: Text(months==null?'':months),
             )
           ],
         ),
@@ -389,6 +389,7 @@ class DetailHostelWidget extends StatelessWidget {
   }
 }
 
+
 void showUpdateDialog(BuildContext context, String label,String placeName) async{
   TextEditingController controller= TextEditingController();
   await showDialog<String>(
@@ -398,10 +399,7 @@ void showUpdateDialog(BuildContext context, String label,String placeName) async
           content: new Row(
             children: <Widget>[
               new Expanded(
-                  child: new TextFormField(
-                    validator: (String value) {
-                      return value.contains('@') ? 'Do not use the @ char.' : null;
-                    },
+                  child: new TextField(
                     controller: controller,
 
                     // controller: controller,
@@ -419,10 +417,12 @@ void showUpdateDialog(BuildContext context, String label,String placeName) async
                 child: const Text('Cancel'),
                 onPressed: () {
                   Navigator.pop(context);
+
                 }),
             new FlatButton(
                 child: const Text('Save'),
                 onPressed: () async{
+
                 await updateSelect(controller.value.text, placeName);
                 Navigator.pop(context);
                 })

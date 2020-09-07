@@ -31,11 +31,10 @@ class _RootPageState extends State<RootPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    for (var place in shweDaogon) {
-      insertDatabase(place);
-
-    }
-
+    // for (var place in shweDaogon) {
+    //   insertDatabase(place);
+    //
+    // }
 
     Firebase.initializeApp().whenComplete((){
       print('complete');

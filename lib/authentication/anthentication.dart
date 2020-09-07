@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -46,9 +47,9 @@ class Auth implements BaseAuth{
   }
 
   @override
-  Future<void> signOut() {
+  Future<void> signOut() async{
     // TODO: implement signOut
-    throw UnimplementedError();
+    return await FirebaseAuth.instance.signOut();
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:googleauth/const/constValue.dart';
+import 'package:googleauth/database/databaseHelper.dart';
 import 'package:googleauth/item/placeItem.dart';
 import 'package:googleauth/model/placemodel.dart';
 import 'package:googleauth/page/divisionPage.dart';
@@ -17,15 +18,29 @@ class PlaceSelect extends StatefulWidget {
 
 class _PlaceSelectState extends State<PlaceSelect> {
 
+  void dataBaseGet(){
+    for(var data in shweDaogon){
+      insertDatabase(data);
+    }
+
+  }
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
-
-
     final List<PlaceModel> _divisionList =map[widget.divName];
 
 
     return Scaffold(
+
 
       body: Stack(
         children: [

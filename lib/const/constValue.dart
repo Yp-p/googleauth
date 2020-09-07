@@ -43,6 +43,10 @@ Future<UserCredential> signInWithEmail(String email, String password) async {
   }
 }
 
+Future<void> signout() async{
+  return await FirebaseAuth.instance.signOut();
+}
+
 
 
 

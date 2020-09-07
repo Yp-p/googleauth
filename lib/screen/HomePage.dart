@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:googleauth/const/constValue.dart';
 import 'package:googleauth/page/CategoryPage.dart';
 import 'package:googleauth/page/divisionPage.dart';
+import 'package:googleauth/page/userInfoPage.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -20,7 +21,7 @@ class _HomePageState extends State<HomePage> {
     Text('1111111111'),
     CategoryItem(),
     CategoryItem(),
-    Text('hhhh'),
+    UserInfo(),
   ];
 
   void _onItemTapped(int index) {
@@ -32,6 +33,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       appBar: AppBar(
         title: Text('ဘာညာကွိကွ'),
         backgroundColor: gColor,

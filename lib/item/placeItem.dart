@@ -14,6 +14,8 @@ class PlaceItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
     return FutureBuilder(
       future: getStatePlaceDatabase(state),
       builder: (BuildContext context, AsyncSnapshot snapshot){
@@ -39,7 +41,7 @@ class PlaceItem extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Image.asset(
-                    snapshot.data[index].image,
+                    snapshot.data[index].image==null? 'images/bagan.jpg':snapshot.data[index].image,
                       fit: BoxFit.cover,
 
 

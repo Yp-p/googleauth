@@ -38,10 +38,10 @@ class One extends StatefulWidget {
 class _OneState extends State<One> {
   @override
   void initState() {
-    for (var place in shweDaogon) {
-      insertDatabase(place);
-
-    }
+    // for (var place in shweDaogon) {
+    //   insertDatabase(place);
+    //
+    // }
 
     super.initState();
     Firebase.initializeApp().whenComplete(() {

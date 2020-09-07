@@ -60,11 +60,15 @@ class Place {
 
 database() async {
   final Future<Database> database =
-      openDatabase(join(await getDatabasesPath(), 'place_database1.db'),
+      openDatabase(join(await getDatabasesPath(), 'place_database2.db'),
           onCreate: (db, version) {
-    return db.execute(
+
+     db.execute(
         "CREATE TABLE place(placeName TEXT PRIMARY KEY, state TEXT, description TEXT, wonderful TEXT, bestMonth TEXT, location TEXT, map TEXT, recommend TEXT, hostel TEXT, image TEXT, city TEXT, lat TEXT, lon TEXT)");
-  }, version: 1);
+
+  }, version: 1,
+      );
+
   return database;
 }
 
@@ -124,32 +128,36 @@ Future<List<Place>> getPlaceDetailDatabase(String place) async {
   });
 }
 
-var shweDaogon = [
-  Place(
-      placeName: 'ရွှေတိဂုံစေတီတော်3',
-      state: ygn,
-      description: shweDestext,
-      wonderful: 'လေးဆူဓာတ်ပုံ မြတ်ရွှေတိဂုံ',
-      bestMonth: 'ဒီဇင်ဘာ',
-      location: 'သိင်္ဂိုတရကုန်းတော်၊ ဗဟန်းမြို့နယ်၊ ရန်ုကုန်မြို့',
-      map: null,
-      recommend: 'သွားလည်သင့်သည်။',
-      hostel: 'YPP Hostel',
-      image: 'images/shwedagon.jpeg',
-      city: 'Bahan',
-      lat: '10',
-      lon: '10'),
-  Place(
-      placeName: 'ရွှေဆံတော်စေတီတော်',
-      state: ygn,
-      description: shweSandaw,
-      wonderful: 'Good Good',
-      bestMonth: 'ဒီဇင်ဘာ',
-      location: 'ရွှေဆံတော်ရပ်ကွက်၊ တွံတေးမြို့',
-      recommend: 'တွံတေးမြို့ကိုလေ့လာရင်း သဘာ၀အလှတွေနဲ့ပြည့်နေသော နေရာတစ်ခုဖြစ်ပါသည်။',
-      hostel: 'YPP Hostel',
-      image: 'images/shwedagon.jpeg',
-      city: 'Twantay',
-      lat: '15',
-      lon: '15'),
-];
+
+  var shweDaogon = [
+    Place(
+        placeName: 'ရွှေတိဂုံစေတီတော်3',
+        state: ygn,
+        description: shweDestext,
+        wonderful: 'လေးဆူဓာတ်ပုံ မြတ်ရွှေတိဂုံ',
+        bestMonth: 'ဒီဇင်ဘာ',
+        location: 'သိင်္ဂိုတရကုန်းတော်၊ ဗဟန်းမြို့နယ်၊ ရန်ုကုန်မြို့',
+        map: null,
+        recommend: 'သွားလည်သင့်သည်။',
+        hostel: 'YPP Hostel',
+        image: 'images/shwedagon.jpeg',
+        city: 'Bahan',
+        lat: '10',
+        lon: '10'),
+    Place(
+        placeName: 'ရွှေဆံတော်စေတီတော်',
+        state: ygn,
+        description: shweSandaw,
+        wonderful: 'Good Good',
+        bestMonth: 'ဒီဇင်ဘာ',
+        location: 'ရွှေဆံတော်ရပ်ကွက်၊ တွံတေးမြို့',
+        recommend: 'တွံတေးမြို့ကိုလေ့လာရင်း သဘာ၀အလှတွေနဲ့ပြည့်နေသော နေရာတစ်ခုဖြစ်ပါသည်။',
+        hostel: 'YPP Hostel',
+        image: 'images/shwedagon.jpeg',
+        city: 'Twantay',
+        lat: '15',
+        lon: '15'),
+  ];
+
+
+
