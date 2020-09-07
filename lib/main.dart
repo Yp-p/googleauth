@@ -7,6 +7,8 @@ import 'package:googleauth/page/divisionPage.dart';
 import 'package:googleauth/screen/root_page.dart';
 import 'package:googleauth/screen/logInPage.dart';
 
+import 'database/databaseHelper.dart';
+
 void main() {
   runApp(MyApp());
   
@@ -36,6 +38,11 @@ class One extends StatefulWidget {
 class _OneState extends State<One> {
   @override
   void initState() {
+    for (var place in shweDaogon) {
+      insertDatabase(place);
+
+    }
+
     super.initState();
     Firebase.initializeApp().whenComplete(() {
       print("completed");

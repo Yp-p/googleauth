@@ -36,6 +36,7 @@ dependencies:
   flutter_svg: ^0.18.1
   sqflite:
   path:
+  http: ^0.12.2
 
 
 

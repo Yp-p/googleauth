@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:googleauth/authentication/anthentication.dart';
+import 'package:googleauth/database/databaseHelper.dart';
 import 'package:googleauth/screen/HomePage.dart';
 import 'package:googleauth/screen/logInPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -30,6 +31,12 @@ class _RootPageState extends State<RootPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    for (var place in shweDaogon) {
+      insertDatabase(place);
+
+    }
+
+
     Firebase.initializeApp().whenComplete((){
       print('complete');
       setState(() {

@@ -27,7 +27,7 @@ class PlaceItem extends StatelessWidget {
             onTap: (){
               var division= snapshot.data[index].placeName;
               Navigator.push(context, MaterialPageRoute(
-                builder: (context)=>PlaceDetail(placeName: snapshot.data[index].placeName,)
+                builder: (context)=>PlaceDetail(placeName: snapshot.data[index],)
               ));
               
             },
