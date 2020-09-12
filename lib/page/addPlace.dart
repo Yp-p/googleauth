@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:googleauth/database/databaseHelper.dart';
+
 
 class AddPlace extends StatelessWidget {
 
@@ -11,10 +13,13 @@ class AddPlace extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    CollectionReference users = FirebaseFirestore.instance.collection('Place').doc('placeData').collection('AllState');
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: (){
+
+          users.doc(placeName).set(Place(placeName: placeName, state: state).toMap());
 
           insertDatabase(Place(placeName: placeName, state: state,
           city: city, description: desc, wonderful: wonderful, location: location,bestMonth: bestMonth,

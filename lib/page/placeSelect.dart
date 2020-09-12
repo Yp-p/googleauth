@@ -18,18 +18,15 @@ class PlaceSelect extends StatefulWidget {
 
 class _PlaceSelectState extends State<PlaceSelect> {
 
-  void dataBaseGet(){
-    for(var data in shweDaogon){
-      insertDatabase(data);
-    }
 
-  }
 
 
   @override
   void initState() {
     // TODO: implement initState
+
     super.initState();
+
 
   }
 

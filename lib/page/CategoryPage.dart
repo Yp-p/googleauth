@@ -20,9 +20,10 @@ class CategoryItem extends StatelessWidget {
         image: 'images/bagan.jpg'
     ),
     CategoryModel(
-        title: 'သွားမယ် လည်မယ်',
-        descrip: 'ခရီးသွားခြင်းဖြင့် သင့်ရဲ့ ပျော်ရွှင်မှုတွေကို ဖန်တီးလိုက်ပါ',
-        image: 'images/bagan.jpg'
+        catID: '/quiz',
+        title: 'ဖြေကြရအောင်',
+        descrip: 'မြန်မာနိုင်ငံနေရာတွေအကြောင်း သင်ဘယ်လောက်သိမယ်ထင်လဲ',
+        image: 'images/quizlogo.png'
     ),
     CategoryModel(
         title: 'သွားမယ် လည်မယ်',

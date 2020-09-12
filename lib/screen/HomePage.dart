@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:googleauth/authentication/cloudfirestore/ColudFireStroeUpdate.dart';
+import 'package:googleauth/authentication/firebasestore.dart';
 import 'package:googleauth/const/constValue.dart';
 import 'package:googleauth/page/CategoryPage.dart';
+import 'package:googleauth/page/addFireStore.dart';
 import 'package:googleauth/page/divisionPage.dart';
+import 'package:googleauth/page/firstPage.dart';
+import 'package:googleauth/page/savePage.dart';
 import 'package:googleauth/page/userInfoPage.dart';
+
+// import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -12,14 +19,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-
+Future<void> _lunch;
+String _phone;
 
 
 
   int _selectIndex = 0;
   static List<Widget> _widgetOption = <Widget>[
-    Text('1111111111'),
-    CategoryItem(),
+    AddFirestore(),
+    SavePage(),
     CategoryItem(),
     UserInfo(),
   ];
@@ -30,10 +38,19 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+//   Future<void> _makePhoneCall(String url) async{
+//
+//     if(await canLaunch(url)){
+//       launch(url);
+//     }else{
+//       throw ('Could not Lauch $url');
+//     }
+// }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
+
       appBar: AppBar(
         title: Text('ဘာညာကွိကွ'),
         backgroundColor: gColor,
@@ -45,7 +62,7 @@ class _HomePageState extends State<HomePage> {
         elevation: 10,
         child: ListView(
           padding: EdgeInsets.zero,
-          children: const <Widget>[
+          children:  <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
                 color: gColor,
@@ -59,10 +76,18 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             ListTile(
+              onTap: (){
+
+
+                // _lunch=_makePhoneCall('tel:+959 454440086');
+                print('hhhh');
+              } ,
               leading: Icon(Icons.message),
               title: Text('Messages'),
+
             ),
             ListTile(
+
               leading: Icon(Icons.account_circle),
               title: Text('Profile'),
             ),
@@ -74,6 +99,8 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.blue,
+        elevation: 10,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
           BottomNavigationBarItem(

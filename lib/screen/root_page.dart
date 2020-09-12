@@ -27,10 +27,19 @@ class _RootPageState extends State<RootPage> {
   AuthStatus authStatus= AuthStatus.NOT_DETERMINED;
   String _userID='';
 
+
+  // void dataBaseGet(){
+  //   for(var data in shweDaogon){
+  //     insertDatabase(data);
+  //   }
+  //
+  // }
+
 @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    // dataBaseGet();
     // for (var place in shweDaogon) {
     //   insertDatabase(place);
     //

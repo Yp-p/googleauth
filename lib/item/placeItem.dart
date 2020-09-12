@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:googleauth/database/databaseHelper.dart';
 import 'package:googleauth/model/divisionModel.dart';
@@ -14,22 +15,24 @@ class PlaceItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    CollectionReference users = FirebaseFirestore.instance.collection('Place').doc('placeData').collection('AllState');
 
 
-    return FutureBuilder(
-      future: getStatePlaceDatabase(state),
-      builder: (BuildContext context, AsyncSnapshot snapshot){
+    return StreamBuilder<QuerySnapshot>(
+      stream: users.where('state',isEqualTo: state).snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
         if(snapshot.hasData){
           return GridView.builder(
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
             maxCrossAxisExtent: 200, childAspectRatio: 1.3),
-        itemCount: snapshot.data.length,
+        itemCount: snapshot.data.size,
         itemBuilder: (context, index) {
+          Map data= snapshot.data.docs[index].data();
           return InkWell(
             onTap: (){
-              var division= snapshot.data[index].placeName;
+              var division= data['state'];
               Navigator.push(context, MaterialPageRoute(
-                builder: (context)=>PlaceDetail(placeName: snapshot.data[index],)
+                builder: (context)=>PlaceDetail(data: data,)
               ));
               
             },
@@ -40,12 +43,10 @@ class PlaceItem extends StatelessWidget {
                   height: 700,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.asset(
-                    snapshot.data[index].image==null? 'images/bagan.jpg':snapshot.data[index].image,
-                      fit: BoxFit.cover,
-
-
-                    ),
+                    child: data['image']==null?Image.asset('images/bagan.jpg'):Image.network(
+          data['image'],
+            fit: BoxFit.cover,
+          ),
                   ),
                 ),
                 Container(
@@ -56,7 +57,7 @@ class PlaceItem extends StatelessWidget {
 
                 Center(
                   child: Container(
-                    child: Text(snapshot.data[index].placeName,
+                    child: Text(data['placeName'],
                       style: TextStyle(
                           fontSize: 17,
                           color: Colors.white,

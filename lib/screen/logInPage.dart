@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:googleauth/authentication/anthentication.dart';
 import 'package:googleauth/const/constValue.dart';
 import 'package:googleauth/screen/SignUpPage.dart';
 import 'package:googleauth/screen/root_page.dart';
@@ -14,6 +15,10 @@ class LogInPage extends StatefulWidget {
 }
 
 class _LogInPageState extends State<LogInPage> {
+  TextEditingController useremail=TextEditingController();
+  TextEditingController userpassword= TextEditingController();
+
+  BaseAuth baseAuth;
 
   @override
   void initState() {
@@ -39,6 +44,7 @@ class _LogInPageState extends State<LogInPage> {
   @override
   Widget build(BuildContext context) {
 
+
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -63,7 +69,6 @@ class _LogInPageState extends State<LogInPage> {
                     child: Image.asset('images/logo.png',),
                   ),
 
-
                   Container(
                     margin: EdgeInsets.symmetric(vertical: 10),
                     width: size.width * 0.8,
@@ -73,6 +78,7 @@ class _LogInPageState extends State<LogInPage> {
                         // color: gColor,
                         border: Border.all(color: gColor)),
                     child: TextField(
+                      controller: useremail,
                       decoration: InputDecoration(
                           icon: Icon(
                             Icons.email,
@@ -89,6 +95,7 @@ class _LogInPageState extends State<LogInPage> {
                         border: Border.all(color: gColor),
                         borderRadius: BorderRadius.circular(30)),
                     child: TextField(
+                     controller: userpassword,
                       decoration: InputDecoration(
                           icon: Icon(
                             Icons.lock,
@@ -111,7 +118,24 @@ class _LogInPageState extends State<LogInPage> {
                           style: TextStyle(color: Colors.white),
                         ),
                         color: gColor,
-                        onPressed: () {},
+                        onPressed: () {
+                          // print(useremail.value.toString());
+
+                          loginwithEmail(useremail.text.toString(), userpassword.text.toString());
+
+                          FirebaseAuth.instance
+                              .authStateChanges()
+                              .listen((User user) {
+                            if (user == null) {
+                              print('User is currently signed out!');
+                            } else {
+                              print('User is signed in!');
+                              Navigator.push(context, MaterialPageRoute(
+                                  builder: (context)=>RootPage()
+                              ));
+                            }
+                          });
+                        },
                       ),
                     ),
                   ),

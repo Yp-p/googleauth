@@ -45,7 +45,7 @@ class _DivisionState extends State<Division> {
         color: gColor,
         child: Text('နေရာအသစ် ထပ်ထည့်မည်', style: TextStyle(color: Colors.white),),
       ),
-      body: divisionItem(divisionList: _divisionList),
+      body: divisionItem(),
     );
 
 

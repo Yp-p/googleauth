@@ -3,12 +3,33 @@ import 'package:googleauth/model/divisionModel.dart';
 import 'package:googleauth/page/placeSelect.dart';
 
 class divisionItem extends StatelessWidget {
-  const divisionItem({
-    Key key,
-    @required List<DivisionModel> divisionList,
-  }) : _divisionList = divisionList, super(key: key);
 
-  final List<DivisionModel> _divisionList;
+
+  // const divisionItem({
+  //   Key key,
+  //   @required List<DivisionModel> divisionList,
+  // }) : _divisionList = divisionList, super(key: key);
+  //
+  // final List<DivisionModel> _divisionList;
+  //
+  //
+  final List<DivisionModel> _divisionList = [
+    DivisionModel(image: 'images/shwedagon.jpeg', name: 'ရန်ကုန်တိုင်းဒေသကြီး'),
+    DivisionModel(image: 'images/division/ngwesaung.jpg', name: 'ဧရာဝတီတိုင်းဒေသကြီး'),
+    DivisionModel(image: 'images/bagan.jpg', name: 'မန္တလေးတိုင်းဒေသကြီး'),
+    DivisionModel(image: 'images/division/bago.jpg', name: 'ပဲခူးတိုင်းဒေသကြီး'),
+    DivisionModel(image: 'images/division/magwe.jpg', name: 'မကွေးတိုင်းဒေသကြီး'),
+    DivisionModel(image: 'images/division/sagaing.jpg', name: 'စစ်ကိုင်းတိုင်းဒေသကြီး'),
+    DivisionModel(image: 'images/division/thanintharyi.jpg', name: 'တနင်္သာရီတိုင်းဒေသကြီး'),
+    DivisionModel(image: 'images/division/kachin.jpg', name: 'ကချင်ပြည်နယ်'),
+    DivisionModel(image: 'images/division/kaya.jpg', name: 'ကယားပြည်နယ်'),
+    DivisionModel(image: 'images/division/kayin.jpg', name: 'ကရင်ပြည်နယ်'),
+    DivisionModel(image: 'images/division/mon.jpg', name: 'မွန်ပြည်နယ်'),
+    DivisionModel(image: 'images/division/rakhine.jpg', name: 'ရခိုင်ပြည်နယ်'),
+    DivisionModel(image: 'images/division/shan.jpg', name: 'ရှမ်းပြည်နယ်'),
+    DivisionModel(image: 'images/division/chin.jpg', name: 'ချင်းပြည်နယ်'),
+
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +41,9 @@ class divisionItem extends StatelessWidget {
           DivisionModel divisionModel = _divisionList[index];
           return InkWell(
             onTap: (){
-              var division= divisionModel.name;
+              print(divisionModel.name);
               Navigator.push(context, MaterialPageRoute(
-                  builder: (context)=>PlaceSelect(divName: division,)
+                  builder: (context)=>PlaceSelect(divName: divisionModel.name,)
               ));
             },
             child: Stack(
