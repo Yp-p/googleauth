@@ -40,6 +40,11 @@ dependencies:
   flutter_slidable: ^0.5.7
   webview_flutter: ^0.3.22+1
   cloud_firestore: ^0.14.0+2
+  animated_text_kit: ^2.2.0
+  vibration: ^1.4.0
+  audioplayers: ^0.16.1
+
+
 
 #  url_launcher: ^5.5.2
 #  url_launcher: ^5.5.2
@@ -84,6 +89,7 @@ flutter:
     - images/division/shan.jpg
     - images/division/chin.jpg
     - images/quizlogo.png
+    - assets/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

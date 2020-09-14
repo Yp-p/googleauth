@@ -86,6 +86,7 @@ class _PlaceSelectState extends State<PlaceSelect> {
                     elevation: 5.0,
                     borderRadius: BorderRadius.circular(30),
                     child: TextField(
+                      onChanged: (value)=>print(value),
                       decoration: InputDecoration(
                         hintText: "သွားလည်ချင်သော နေရာကို ရှာပါ",
                         prefixIcon: Material(

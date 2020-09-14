@@ -1,3 +1,4 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:googleauth/const/constValue.dart';
@@ -11,18 +12,12 @@ class FirstPage extends StatelessWidget {
           body: Stack(
             children: [
               Container(
-                  margin: EdgeInsets.only(top: 280),
+                  margin: EdgeInsets.only(top: 180, left: 5, right: 5),
                   child: divisionItem()),
-              Container(
-                color: gColor,
-                width: MediaQuery.of(context).size.width,
-                height: 100,
-               
 
-              ),
               SingleChildScrollView(
                 child: Container(
-                  margin: EdgeInsets.only(top: 60,),
+                  margin: EdgeInsets.only(top: 20,),
                   decoration: BoxDecoration(
 
                   ),
@@ -60,23 +55,43 @@ class FirstPage extends StatelessWidget {
                       Card(
                         elevation: 5,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)
+                          borderRadius: BorderRadius.circular(50),
+
                         ),
                         margin: EdgeInsets.all(10),
-                        color: Colors.green.shade200,
+
                         child: Container(
 
                           width: MediaQuery.of(context).size.width,
                           margin: EdgeInsets.all(10),
-                          color: Colors.white,
-                          height: 100,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('မြန်မာနိုင်ငံ၏ မြို့တော်အမည်ကို ရွေးချယ်ပါ။', style: TextStyle(
-                                fontSize: 15
-                              ),)
+
+
+                          child: Center(
+                            child: SizedBox(
+
+                            child: ScaleAnimatedTextKit(
+                              totalRepeatCount: 300,
+                              duration: Duration(seconds: 3),
+                            onTap: () {
+                                Navigator.pushNamed(context, '/quiz');
+                            print("Tap Event");
+                            },
+                            text: [
+
+                            "မြန်မာနိုင်ငံအကြောင်း ဘယ်လောက်သိလဲ...",
+                              "မေးခွန်းလေးတွေဖြေကြည့်ရန်",
+                              "ဒီနေရာကိုနှိပ်ပါ"
                             ],
+                            textStyle: TextStyle(
+                            fontSize: 17.0,
+                            // color: gColor,
+                            fontFamily: "Bobbers"
+                            ),
+                              isRepeatingAnimation: true,
+                            textAlign: TextAlign.center,
+                            alignment: AlignmentDirectional.topStart // or Alignment.topLeft
+                            ),
+                            ),
                           ),
                           // child: ,
                         ),

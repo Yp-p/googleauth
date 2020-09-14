@@ -220,8 +220,13 @@ class DetailWonderfulWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 3,
+
       margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
       child: Container(
+      decoration: BoxDecoration(
+      ),
+        
         child: Column(
           children: [
             Container(
@@ -236,6 +241,8 @@ class DetailWonderfulWidget extends StatelessWidget {
               ),
             ),
             Container(
+
+
               padding: EdgeInsets.all(10),
               child: Text(wonderful != null ? wonderful : ''),
             )
@@ -254,6 +261,7 @@ class DetailMonthsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 3,
       margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
       child: Container(
         child: Column(
@@ -293,6 +301,7 @@ class _DetailWeatherWidgetState extends State<DetailWeatherWidget> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 3,
       margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
       child: Container(
         child: Column(
@@ -341,6 +350,7 @@ class DetailLocationWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 3,
       margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
       child: Container(
         child: Column(
@@ -392,6 +402,7 @@ class _DetailRecommedWidgetState extends State<DetailRecommedWidget> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 3,
       margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
       child: Container(
         child: Column(
@@ -435,6 +446,7 @@ class DetailHostelWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 3,
       margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
       child: Container(
         child: Column(

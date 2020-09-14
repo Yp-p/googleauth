@@ -24,3 +24,7 @@ String mon= 'မွန်ပြည်နယ်';
 String rakhaing='ရခိုင်ပြည်နယ်';
 String shan= 'ရှမ်းပြည်နယ်';
 String chin= 'ချင်းပြည်နယ်';
+
+List<String> stateList=[ygn,ayawa,mdy,bago,magwe,sagaing,tanin,kachin,kaya,
+karen,mon,rakhaing,shan,chin
+];

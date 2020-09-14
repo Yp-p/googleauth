@@ -2,24 +2,32 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:googleauth/database/databaseHelper.dart';
+import 'package:googleauth/const/stringvalue.dart';
 
 
-class AddPlace extends StatelessWidget {
+class AddPlace extends StatefulWidget {
 
+  @override
+  _AddPlaceState createState() => _AddPlaceState();
+}
+
+String dropDownValue=stateList[0];
+
+class _AddPlaceState extends State<AddPlace> {
   String placeName, state, city, desc,wonderful, location, bestMonth, recommend, hostel;
-
-
-
 
   @override
   Widget build(BuildContext context) {
+
     CollectionReference users = FirebaseFirestore.instance.collection('Place').doc('placeData').collection('AllState');
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: (){
 
-          users.doc(placeName).set(Place(placeName: placeName, state: state).toMap());
+          users.doc(placeName).set(Place(placeName: placeName, state: state,city: city,
+          description: desc,wonderful: wonderful, location: location, bestMonth: bestMonth,
+          recommend: recommend, hostel: hostel).toMap());
 
           insertDatabase(Place(placeName: placeName, state: state,
           city: city, description: desc, wonderful: wonderful, location: location,bestMonth: bestMonth,
@@ -61,6 +69,7 @@ class AddPlace extends StatelessWidget {
               ),
             ),
             Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
               margin: EdgeInsets.all(10),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
@@ -69,18 +78,23 @@ class AddPlace extends StatelessWidget {
 
                   )
               ),
-              child: TextField(
-                onChanged: (value)=>state=value,
-                textAlign: TextAlign.center,
+              child:  DropdownButton(
+                underline: Container(),
+                isExpanded: true,
+                icon: Icon(Icons.keyboard_arrow_down),
+                value: dropDownValue,
+                items: stateList.map((e) => DropdownMenuItem(
+                  child: Center(child: Text(e)),
+                  value: e,
+                )).toList(),
 
-                decoration: InputDecoration(
+                onChanged: (value){setState(() {
+                  dropDownValue=value;
+                });},
 
-                    border: InputBorder.none,
-
-                    hintText: 'တိုင်းဒေသကြီး (သို့) ပြည်နယ်ထည့်ပါ'
-                ),
               ),
             ),
+
             Container(
               margin: EdgeInsets.all(10),
               decoration: BoxDecoration(

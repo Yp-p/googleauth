@@ -1,12 +1,17 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:googleauth/authentication/cloudfirestore/cloudFireStoreModel.dart';
 import 'package:googleauth/const/constValue.dart';
 import 'package:googleauth/database/databaseHelper.dart';
+import 'package:vibration/vibration.dart';
+import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class QuizPage extends StatefulWidget {
 
@@ -79,7 +84,10 @@ class StreamWidget extends StatefulWidget {
 }
 
 class _StreamWidgetState extends State<StreamWidget> {
+
+
   int length=0;
+  AudioCache audioCache=AudioCache();
 
   Color bluecolor=Colors.blue.shade100;
   String rightAnswer='';
@@ -91,16 +99,24 @@ class _StreamWidgetState extends State<StreamWidget> {
     if(rightAnswer==''){
       return bluecolor;
     }else if(rightAnswer==answer){
+
       return gColor;
+
     }else{
+
       return Colors.red;
     }
 
   }
   void answer(String slectAnswer, String correctAnswer){
     if(slectAnswer==correctAnswer){
+      final audioCache1= AudioCache();
+      audioCache1.play('correct.wav');
       correctCount++;
     }else{
+      final audioCache1= AudioCache();
+
+      audioCache1.play('incrrect.mp3');
       wrongCount++;
     }
   }
@@ -108,7 +124,9 @@ class _StreamWidgetState extends State<StreamWidget> {
     Duration threeSecond= Duration(seconds: 2);
     Future.delayed(threeSecond,(){setState(() {
 
+
       if(length<9){
+
         length++;
         rightAnswer='';
       }
@@ -122,16 +140,31 @@ class _StreamWidgetState extends State<StreamWidget> {
     });});
 
   }
+  List indexList;
 
+
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    indexList = new List<int>.generate(10, (int index) => index); // [0, 1, 4]
+    indexList.shuffle();
+
+    print(indexList[0]);
+
+  }
 
   @override
   Widget build(BuildContext context) {
 
 
+  print(indexList);
+
     return StreamBuilder<QuerySnapshot>(
       stream: widget.users.snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        
+
+
         
         if (snapshot.hasError) {
           return Text('Something went wrong');
@@ -144,10 +177,16 @@ class _StreamWidgetState extends State<StreamWidget> {
         return new ListView.builder(
             itemCount: 1,
             itemBuilder: (context,index){
+
+
+
+
               DocumentSnapshot document;
 
-              document=snapshot.data.docs[length];
+              document=snapshot.data.docs[indexList[length]];
               Map a=document.data();
+
+
 
 
               return Container(
@@ -169,20 +208,17 @@ class _StreamWidgetState extends State<StreamWidget> {
                         child: RaisedButton(
                           padding: EdgeInsets.all(10),
                           onPressed: () {
+
                              setState(() {
 
                               rightAnswer=document.data()['correctAnswer'];
+                              // Vibration.vibrate();
                               answer(document.data()['correctAnswer'], document.data()['option1']);
-
-                              Duration delay= Duration(seconds: 3);
-                              // Future.delayed(delay, (){
-                              //   length++;
-                              // });
-
-                               countIncre();
+                              countIncre();
 
 
-                            });
+                            }
+                            );
                           },
                           elevation: 5,
                           color: resultColor(document.data()['option1']),
@@ -205,22 +241,10 @@ class _StreamWidgetState extends State<StreamWidget> {
 
                               rightAnswer=document.data()['correctAnswer'];
                               answer(document.data()['correctAnswer'], document.data()['option2']);
-                              // countIncre();
-                              Duration threeSecond= Duration(seconds: 2);
-                              Future.delayed(threeSecond,(){setState(() {
+                               countIncre();
 
-                                if(length<9){
-                                  length++;
-                                  rightAnswer='';
-                                }
-                                else{
 
-                                  Navigator.pushReplacement(context, MaterialPageRoute(
-                                      builder: (context)=>Result()
-                                  ));
-                                }
 
-                              });});
 
                             });
                           },
@@ -245,15 +269,7 @@ class _StreamWidgetState extends State<StreamWidget> {
 
                               rightAnswer=document.data()['correctAnswer'];
                               answer(document.data()['correctAnswer'], document.data()['option3']);
-
-                              Duration delay= Duration(seconds: 3);
-                              // Future.delayed(delay, (){
-                              //   length++;
-                              // });
-
                               countIncre();
-
-
                             });
                           },
                           elevation: 5,
@@ -278,10 +294,7 @@ class _StreamWidgetState extends State<StreamWidget> {
                               rightAnswer=document.data()['correctAnswer'];
                               answer(document.data()['correctAnswer'], document.data()['option4']);
 
-                              Duration delay= Duration(seconds: 3);
-                              // Future.delayed(delay, (){
-                              //   length++;
-                              // });
+
 
                               countIncre();
 
@@ -328,6 +341,8 @@ class _StreamWidgetState extends State<StreamWidget> {
     );
   }
   Widget Result(){
+    final audioCache1= AudioCache();
+    audioCache1.play('cheer.wav');
     return Center(
       child: Scaffold(
         appBar: AppBar(elevation: 0,backgroundColor: Colors.transparent,iconTheme: IconThemeData(color: gColor),),

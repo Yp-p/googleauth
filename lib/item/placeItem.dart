@@ -42,8 +42,8 @@ class PlaceItem extends StatelessWidget {
                   margin: EdgeInsets.all(5),
                   height: 700,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: data['image']==null?Image.asset('images/bagan.jpg'):Image.network(
+                    borderRadius: BorderRadius.circular(20),
+                    child: data['image']==null?Image.asset('images/bagan.jpg',fit: BoxFit.cover,):Image.network(
           data['image'],
             fit: BoxFit.cover,
           ),
@@ -51,8 +51,12 @@ class PlaceItem extends StatelessWidget {
                 ),
                 Container(
                   margin: EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                      color: Color.fromRGBO(255, 100, 0, 0.3),
+                    borderRadius: BorderRadius.circular(20)
+                  ),
                   height: 700,
-                  color: Color.fromRGBO(255, 100, 0, 0.3),
+
                 ),
 
                 Center(

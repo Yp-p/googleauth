@@ -67,7 +67,8 @@ class _UserInfoState extends State<UserInfo> {
       body:StreamBuilder<QuerySnapshot>(
         stream: userinfo.snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot>snapshot){
-          Map data=snapshot.data.docs[0].data();
+          print(snapshot.data.docs.length);
+          Map data=snapshot.data.docs.length!=null&&snapshot.data.docs.length>0?snapshot.data.docs[0].data():{};
           return userinfoItem(data: data,);
             // Text('${data['phone']}  ${auth.currentUser.email}' );
         },
@@ -77,25 +78,33 @@ class _UserInfoState extends State<UserInfo> {
 }
 
 class userinfoItem extends StatelessWidget {
+
+
   final Map data;
-
   const userinfoItem({Key key, this.data}) : super(key: key);
-
 
   @override
   Widget build(BuildContext context) {
+    FirebaseAuth firebaseAuth=FirebaseAuth.instance;
+    firebaseAuth.currentUser.updateProfile(displayName: 'YanPaingPhyoe', photoURL: 'https://firebasestorage.googleapis.com/v0/b/login-6fd3a.appspot.com/o/Screenshot%20from%202020-09-09%2023-08-48.png?alt=media&token=f4408fc3-3daf-4b10-8620-0fd5ade797d5');
+
+
+
     return SingleChildScrollView(
       child: Center(
         child: Container(
           margin: EdgeInsets.all(10),
           child: Column(
             children: [
+              Container(
+                  height: 100,
+                  child: Image.network(firebaseAuth.currentUser.photoURL)),
               Text(
-                '${data['userName']}',
+                '${firebaseAuth.currentUser.displayName}',
                 style: TextStyle(fontSize: 20),
               ),
               Text(
-                '${data['email']}',
+                '${firebaseAuth.currentUser.email}',
                 style: TextStyle(fontSize: 13),
               ),
               Text('အသုံးပြုသူအချက်အလက်'),
@@ -119,7 +128,7 @@ class userinfoItem extends StatelessWidget {
               ListTile(
                 leading: Icon(Icons.email),
                 title: Text(
-                  '${data['email']}',
+                  '${firebaseAuth.currentUser.email}',
                   style: TextStyle(fontSize: 14),
                 ),
               ),

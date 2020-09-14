@@ -52,7 +52,7 @@ class divisionItem extends StatelessWidget {
                   margin: EdgeInsets.all(5),
                   height: 700,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(20),
                     child: Image.asset(
                       divisionModel.image,
                       fit: BoxFit.cover,
@@ -62,9 +62,13 @@ class divisionItem extends StatelessWidget {
                   ),
                 ),
                 Container(
+                  decoration: BoxDecoration(
+                      color: Color.fromRGBO(255, 100, 0, 0.3),
+                      borderRadius: BorderRadius.circular(20)
+                  ),
                   margin: EdgeInsets.all(6),
                   height: 700,
-                  color: Color.fromRGBO(255, 100, 0, 0.3),
+
                 ),
 
                 Center(
