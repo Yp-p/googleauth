@@ -28,22 +28,13 @@ class _RootPageState extends State<RootPage> {
   String _userID='';
 
 
-  // void dataBaseGet(){
-  //   for(var data in shweDaogon){
-  //     insertDatabase(data);
-  //   }
-  //
-  // }
+
 
 @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // dataBaseGet();
-    // for (var place in shweDaogon) {
-    //   insertDatabase(place);
-    //
-    // }
+
 
     Firebase.initializeApp().whenComplete((){
       print('complete');

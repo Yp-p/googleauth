@@ -10,6 +10,8 @@ import 'package:googleauth/page/divisionPage.dart';
 import 'package:googleauth/page/firstPage.dart';
 import 'package:googleauth/page/savePage.dart';
 import 'package:googleauth/page/userInfoPage.dart';
+import 'package:share/share.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // import 'package:url_launcher/url_launcher.dart';
 
@@ -39,19 +41,18 @@ String _phone;
     });
   }
 
-//   Future<void> _makePhoneCall(String url) async{
-//
-//     if(await canLaunch(url)){
-//       launch(url);
-//     }else{
-//       throw ('Could not Lauch $url');
-//     }
-// }
+  Future<void> _makeLunchApp(String url) async{
+
+    if(await canLaunch(url)){
+      launch(url);
+    }else{
+      throw ('Could not Lauch $url');
+    }
+}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       appBar: AppBar(
         title:Center(
           child: ColorizeAnimatedTextKit(
@@ -92,36 +93,50 @@ String _phone;
           children:  <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
-                color: gColor,
+                color: Colors.greenAccent,
               ),
-              child: Text(
-                'Drawer Header',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
-              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ClipRRect(
+                    child: Image.asset('images/division/sagaing.jpg',width: 100, height: 100,fit: BoxFit.cover,),
+                    borderRadius: BorderRadius.circular(100),
+
+                  ),
+                  Text('Yan Paing Phyo', style: TextStyle(fontSize: 18),),
+                  Text('yanpaingphyoeypp@gmail.com', style: TextStyle(fontSize: 12),)
+                ],
+              )
             ),
             ListTile(
               onTap: (){
 
 
-                // _lunch=_makePhoneCall('tel:+959 454440086');
-                print('hhhh');
+                _lunch=_makeLunchApp('mailto:yanpaingphyoeypp@gmail.com?subject=Greetings&body=Please Feedback me');
+
               } ,
-              leading: Icon(Icons.message),
-              title: Text('Messages'),
+              leading: Icon(Icons.feedback),
+              title: Text('အကြံပြုစာပို့ရန်'),
 
             ),
+            Divider(),
             ListTile(
 
-              leading: Icon(Icons.account_circle),
-              title: Text('Profile'),
+              leading: Icon(Icons.stars),
+              title: Text('အဆင့်သတ်မှတ်ပေးမည်'),
             ),
+            Divider(),
             ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Settings'),
+              onTap: (){
+                Share.share('jj',
+                    subject: 'jj',
+                    );
+
+              },
+              leading: Icon(Icons.share),
+              title: Text('App အားမျှဝေမည်'),
             ),
+            Divider(),
           ],
         ),
       ),
@@ -129,13 +144,13 @@ String _phone;
         backgroundColor: Colors.blue,
         elevation: 10,
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
+          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('ပင်မ')),
           BottomNavigationBarItem(
-              icon: Icon(Icons.favorite), title: Text('Save')),
+              icon: Icon(Icons.favorite), title: Text('သိမ်းထား')),
           BottomNavigationBarItem(
-              icon: Icon(Icons.category), title: Text('Category')),
+              icon: Icon(Icons.category), title: Text('ကဏ္ဍ')),
           BottomNavigationBarItem(
-              icon: Icon(Icons.supervisor_account), title: Text('Account')),
+              icon: Icon(Icons.supervisor_account), title: Text('အကောင့်')),
         ],
         currentIndex: _selectIndex,
         selectedItemColor: gColor,

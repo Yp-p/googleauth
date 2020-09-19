@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'dart:convert' as convert;
 
 class Service{
-  final String lat;
-  final String lon;
+  final double lat;
+  final double lon;
 
   Service({this.lat, this.lon});
  Future getData() async{

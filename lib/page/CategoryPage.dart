@@ -26,7 +26,8 @@ class CategoryItem extends StatelessWidget {
         image: 'images/quizlogo.png'
     ),
     CategoryModel(
-        title: 'သွားမယ် လည်မယ်',
+        catID: '/busPrice',
+        title: 'ယာဉ်စီးခများ',
         descrip: 'ခရီးသွားခြင်းဖြင့် သင့်ရဲ့ ပျော်ရွှင်မှုတွေကို ဖန်တီးလိုက်ပါ',
         image: 'images/bagan.jpg'
     )

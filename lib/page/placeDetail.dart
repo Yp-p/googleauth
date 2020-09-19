@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:googleauth/Service/networking.dart';
@@ -6,13 +7,13 @@ import 'package:googleauth/const/constValue.dart';
 import 'package:googleauth/const/stringvalue.dart';
 import 'package:googleauth/database/databaseHelper.dart';
 import 'package:googleauth/model/Weather/weather.dart';
+import 'package:googleauth/page/placeHistory.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PlaceDetail extends StatefulWidget {
   final data;
 
   const PlaceDetail({Key key, this.data}) : super(key: key);
-
-
 
   @override
   _PlaceDetailState createState() => _PlaceDetailState();
@@ -22,80 +23,101 @@ class _PlaceDetailState extends State<PlaceDetail> {
   double temp = 0;
   String lat;
   String lon;
-  Map map={};
-  CollectionReference users = FirebaseFirestore.instance.collection('Place').doc('placeData').collection('AllState');
-
-
-
-
+  Map map = {};
+  CollectionReference users = FirebaseFirestore.instance
+      .collection('Place')
+      .doc('placeData')
+      .collection('AllState');
 
   Map<String, dynamic> weatherData = {};
   List<Place> listData;
 
-  void getDatail() async{
-    Future<List> _getList= getPlaceDetailDatabase('ရွှေတိဂုံစေတီတော်3');
-     listData= await _getList;
-    print(listData[0].placeName);
+  void getDatail() async {
+    Future<List> _getList = getPlaceDetailDatabase('ရွှေတိဂုံစေတီတော်3');
+    listData = await _getList;
+
   }
 
-
-
   void getData() async {
-    var data =
-        await Service(lat: '1', lon: '2')
-            .getData();
+    var data = await Service(lat: widget.data['map'].latitude, lon: widget.data['map'].longitude).getData();
+
     setState(() {
       weatherData = data;
-
     });
   }
 
-
+  
 
   @override
   void initState() {
     super.initState();
     getDatail();
     getData();
+  }
 
+  List saveList = [];
+  String photoUrl;
+
+
+  Future downLoadImage() async {
+
+    StorageReference storageReference = FirebaseStorage.instance
+        .ref()
+        .child('placeImage/${widget.data['placeName']}');
+    String imageUrl = await storageReference.getDownloadURL();
+
+    setState(() {
+      photoUrl = imageUrl;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
 
-    
+
+
+    downLoadImage();
+    getPlaceDetailDatabase(widget.data['placeName']).then((value) {
+      setState(() {
+        saveList = value;
+      });
+    });
+
 
     return SafeArea(
       child: StreamBuilder<QuerySnapshot>(
-        stream: users.where('placeName', isEqualTo: widget.data['placeName']).snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
-          Map dataMap= snapshot.data.docs[0].data();
+        stream: users
+            .where('placeName', isEqualTo: widget.data['placeName'])
+            .snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          Map dataMap = snapshot.data.docs[0].data();
 
+          if(snapshot.hasData){
 
-          return  Scaffold(
+          return
+            Scaffold(
             floatingActionButton: FloatingActionButton(
-
                 backgroundColor: Colors.white,
-                onPressed: (){setState(() {
-                  users.doc(dataMap['placeName']).update({
-                    'save': dataMap['save']==0 ? 1 :0
+                onPressed: () {
+                  setState(() {
+                    saveList.length != 0
+                        ? deleteSaveDatabase(widget.data['placeName'])
+                        : insertDatabase(widget.data);
                   });
-                  
-                  dataMap['save']==1? saveUpdate(0, dataMap['save']) :
-                  saveUpdate(1, dataMap['placeName']);
-                  print(dataMap['save']);
-                });},
-                child: dataMap['save'] != 1
+                },
+                child: saveList.length == 0
+
+                    // dataMap['save'] != 1
                     ? Icon(
-                  Icons.favorite_border,
-                  size: 40,
-                  color: Colors.red,
-                )
+                        Icons.favorite_border,
+                        size: 40,
+                        color: Colors.red,
+                      )
                     : Icon(
-                  Icons.favorite,
-                  size: 40,
-                  color: Colors.red,
-                )),
+                        Icons.favorite,
+                        size: 40,
+                        color: Colors.red,
+                      )),
             floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
             body: Stack(
               children: [
@@ -104,19 +126,26 @@ class _PlaceDetailState extends State<PlaceDetail> {
                     margin: EdgeInsets.only(top: 220),
                     child: Column(
                       children: [
-
-                        desCard(dataMap['description']),
+                        InkWell(
+                            onTap: (){
+                              Navigator.push(context, MaterialPageRoute(
+                                builder: (context) =>PlaceHistory()
+                              ));
+                            },
+                            child: desCard(dataMap['description'])),
                         DetailWonderfulWidget(
-                          wonderful: dataMap['wonderful'],
+                          dataMap: dataMap,
                         ),
                         DetailMonthsWidget(
-                          months: widget.data['bestMonth'],
+                          dataMap: dataMap,
                         ),
                         DetailWeatherWidget(
-                          temp: temp != null ? weatherData['temp'].toString() : '0',
+                          temp: temp != null
+                              ? weatherData['temp'].toString()
+                              : '0',
                         ),
                         DetailLocationWidget(
-                          address: widget.data['location'],
+                          dataMap: dataMap,
                           map: 'haha',
                         ),
                         DetailRecommedWidget(recommed: dataMap),
@@ -139,21 +168,22 @@ class _PlaceDetailState extends State<PlaceDetail> {
                         ),
                         child: InkWell(
                           onTap: () {
-
                             print(temp);
                             print(weatherData['temp']);
                           },
-                          child:widget.data['image']==null?Image.asset('images/bagan.jpg',
-                            height: 200,
-                            fit: BoxFit.cover,
-                            width: MediaQuery.of(context).size.width,
-                          ):    Image.network(
-                            widget.data['image'],
-                            height: 200,
-                            fit: BoxFit.cover,
-                            width: MediaQuery.of(context).size.width,
-                          ),
-
+                          child: photoUrl == null
+                              ? Image.asset(
+                                  'images/bagan.jpg',
+                                  height: 200,
+                                  fit: BoxFit.cover,
+                                  width: MediaQuery.of(context).size.width,
+                                )
+                              : Image.network(
+                                  photoUrl,
+                                  height: 200,
+                                  fit: BoxFit.cover,
+                                  width: MediaQuery.of(context).size.width,
+                                ),
                         ),
                       ),
                     ),
@@ -172,9 +202,9 @@ class _PlaceDetailState extends State<PlaceDetail> {
                       height: 50,
                       child: Center(
                           child: Text(
-                            widget.data['placeName'],
-                            style: TextStyle(fontSize: 20),
-                          )),
+                        widget.data['placeName'],
+                        style: TextStyle(fontSize: 20),
+                      )),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         color: Colors.grey.shade200,
@@ -184,9 +214,9 @@ class _PlaceDetailState extends State<PlaceDetail> {
                 )
               ],
             ),
-          );
-      },
-
+          );}
+          return Text('Your Are note Sign User');
+        },
       ),
     );
     // );
@@ -201,32 +231,33 @@ class _PlaceDetailState extends State<PlaceDetail> {
 }
 
 Widget desCard(String description) {
-  return Card(
-    elevation: 4,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-    margin: EdgeInsets.all(10),
-    child: Text(
-      description!=null?description:'',
-      maxLines: 5,
+  return InkWell(
+
+    child: Card(
+
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      margin: EdgeInsets.all(10),
+      child: Text(
+        description != null ? description : '',
+        maxLines: 5,
+      ),
     ),
   );
 }
 
 class DetailWonderfulWidget extends StatelessWidget {
-  final String wonderful;
+  final Map dataMap;
 
-  const DetailWonderfulWidget({Key key, this.wonderful}) : super(key: key);
+  const DetailWonderfulWidget({Key key, this.dataMap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 3,
-
       margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
       child: Container(
-      decoration: BoxDecoration(
-      ),
-        
+        decoration: BoxDecoration(),
         child: Column(
           children: [
             Container(
@@ -234,17 +265,23 @@ class DetailWonderfulWidget extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(Icons.add_circle),
+                  GestureDetector(
+                      onTap: () {
+                        print('hhh');
+                        showUpdateDialog(context, 'ဘာကြောင့်သွားလည်သင့်လဲ',
+                            dataMap['placeName'], dataMap['wonderful'], 'wonderful');
+                      },
+                      child: Icon(
+                        Icons.add_circle,
+                      )),
                   Text('ထူးခြားချက်များ'),
                   Icon(Icons.keyboard_arrow_down),
                 ],
               ),
             ),
             Container(
-
-
               padding: EdgeInsets.all(10),
-              child: Text(wonderful != null ? wonderful : ''),
+              child: Text(dataMap != null ? dataMap['wonderful'] : ''),
             )
           ],
         ),
@@ -254,9 +291,9 @@ class DetailWonderfulWidget extends StatelessWidget {
 }
 
 class DetailMonthsWidget extends StatelessWidget {
-  final String months;
+  final Map dataMap;
 
-  const DetailMonthsWidget({Key key, this.months}) : super(key: key);
+  const DetailMonthsWidget({Key key, this.dataMap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -271,7 +308,15 @@ class DetailMonthsWidget extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(Icons.add_circle),
+                  GestureDetector(
+                      onTap: () {
+                        print('hhh');
+                        showUpdateDialog(context, 'ဘာကြောင့်သွားလည်သင့်လဲ',
+                            dataMap['placeName'], dataMap['bestMonth'], 'bestMonth');
+                      },
+                      child: Icon(
+                        Icons.add_circle,
+                      )),
                   Text('လည်ပတ်ရန် အကောင်းဆုံးလ'),
                   Icon(Icons.keyboard_arrow_down)
                 ],
@@ -279,7 +324,7 @@ class DetailMonthsWidget extends StatelessWidget {
             ),
             Container(
               padding: EdgeInsets.all(10),
-              child: Text(months == null ? '' : months),
+              child: Text(dataMap == null ? '' : dataMap['bestMonth']),
             )
           ],
         ),
@@ -308,14 +353,7 @@ class _DetailWeatherWidgetState extends State<DetailWeatherWidget> {
           children: [
             Container(
               color: Color(0xFFA5D6A7),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Icon(Icons.add_circle),
-                  Text('ယနေ့ ရာသီဉတုအခြေအနေ'),
-                  Icon(Icons.keyboard_arrow_down)
-                ],
-              ),
+              child: Center(child: Text('ယနေ့ ရာသီဉတုအခြေအနေ')),
             ),
             Container(
                 padding: EdgeInsets.all(10),
@@ -341,14 +379,23 @@ class _DetailWeatherWidgetState extends State<DetailWeatherWidget> {
 }
 
 class DetailLocationWidget extends StatelessWidget {
-  final String address;
+  final Map dataMap;
   final String map;
 
-  const DetailLocationWidget({Key key, this.address, this.map})
+  const DetailLocationWidget({Key key, this.dataMap, this.map})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    Future<void> _makeLunchApp(String url) async{
+
+      if(await canLaunch(url)){
+        launch(url);
+      }else{
+        throw ('Could not Lauch $url');
+      }
+    }
+    
     return Card(
       elevation: 3,
       margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
@@ -360,9 +407,15 @@ class DetailLocationWidget extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(
-                    Icons.add_circle,
-                  ),
+                  GestureDetector(
+                      onTap: () {
+                        print('hhh');
+                        showUpdateDialog(context, 'ဘာကြောင့်သွားလည်သင့်လဲ',
+                            dataMap['placeName'], dataMap['location'], 'location');
+                      },
+                      child: Icon(
+                        Icons.add_circle,
+                      )),
                   Text('တည်နေရာ'),
                   Icon(
                     Icons.keyboard_arrow_down,
@@ -374,10 +427,15 @@ class DetailLocationWidget extends StatelessWidget {
               padding: EdgeInsets.all(10),
               child: Column(
                 children: [
-                  Text(address != null ? address : ''),
-                  Text(
-                    'Google Map Location',
-                    style: TextStyle(color: Colors.blue),
+                  Text(dataMap != null ? dataMap['location'] : ''),
+                  FlatButton(
+                    onPressed: (){
+                      _makeLunchApp('geo: ${dataMap['map'].latitude},${dataMap['map'].longitude}');
+                    },
+                    child: Text(
+                      'Google Map Location',
+                      style: TextStyle(color: Colors.blue),
+                    ),
                   )
                 ],
               ),
@@ -415,7 +473,8 @@ class _DetailRecommedWidgetState extends State<DetailRecommedWidget> {
                   GestureDetector(
                       onTap: () {
                         print('hhh');
-                        showUpdateDialog(context, 'ဘာကြောင့်သွားလည်သင့်လဲ', widget.recommed['placeName']);
+                        showUpdateDialog(context, 'ဘာကြောင့်သွားလည်သင့်လဲ',
+                            widget.recommed['placeName'], widget.recommed['recommend'], 'recommend');
                       },
                       child: Icon(
                         Icons.add_circle,
@@ -427,7 +486,9 @@ class _DetailRecommedWidgetState extends State<DetailRecommedWidget> {
             ),
             Container(
               padding: EdgeInsets.all(10),
-              child: Text(widget.recommed['recommend']!=null?widget.recommed['recommend']:''),
+              child: Text(widget.recommed['recommend'] != null
+                  ? widget.recommed['recommend']
+                  : ''),
             )
           ],
         ),
@@ -456,7 +517,7 @@ class DetailHostelWidget extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(Icons.add_circle),
+
                   Text('အနီးအနား တည်ခိုးရန်နေရာ'),
                   Icon(Icons.keyboard_arrow_down)
                 ],
@@ -481,12 +542,13 @@ class DetailHostelWidget extends StatelessWidget {
       ),
     );
   }
-  
 }
 
 void showUpdateDialog(
-    BuildContext context, String label, String placeName) async {
+    BuildContext context, String label, String placeName, String editTextData, String item) async {
   TextEditingController controller = TextEditingController();
+  String editText;
+
   await showDialog<String>(
       context: context,
       builder: (BuildContext context) {
@@ -494,12 +556,12 @@ void showUpdateDialog(
           content: new Row(
             children: <Widget>[
               new Expanded(
-                  child: new TextField(
-                controller: controller,
+                  child: new TextFormField(
+                    initialValue: editTextData,
+                onChanged: (value)=>editText=value,
+
 
                 // controller: controller,
-                minLines: 5,
-                maxLines: 10,
                 autofocus: true,
                 decoration: new InputDecoration(
                   labelText: label,
@@ -511,18 +573,18 @@ void showUpdateDialog(
             new FlatButton(
                 child: const Text('Cancel'),
                 onPressed: () {
-                  
                   Navigator.pop(context);
                 }),
             new FlatButton(
                 child: const Text('Save'),
                 onPressed: () async {
-                  CollectionReference users = FirebaseFirestore.instance.collection('Place').doc('placeData').collection('AllState');
-                  users.doc(placeName).update({'recommend': controller.text});
+                  CollectionReference users = FirebaseFirestore.instance
+                      .collection('Place')
+                      .doc('placeData')
+                      .collection('AllState');
+                 if( editText!=null){
+                  users.doc(placeName).update({item: editText});}
                   Navigator.pop(context);
-
-
-
                 })
           ],
         );

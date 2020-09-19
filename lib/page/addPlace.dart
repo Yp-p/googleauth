@@ -1,8 +1,15 @@
+
+
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:googleauth/const/constValue.dart';
 import 'package:googleauth/database/databaseHelper.dart';
 import 'package:googleauth/const/stringvalue.dart';
+import 'package:image_picker/image_picker.dart';
 
 
 class AddPlace extends StatefulWidget {
@@ -15,39 +22,71 @@ String dropDownValue=stateList[0];
 
 class _AddPlaceState extends State<AddPlace> {
   String placeName, state, city, desc,wonderful, location, bestMonth, recommend, hostel;
+  File image;
+  ImagePicker picker=ImagePicker();
+
+
+
+  Future uploadPic(BuildContext context) async{
+    StorageReference storageReference=FirebaseStorage.instance.ref().child('placeImage/${placeName}');
+    print(storageReference.getDownloadURL());
+    StorageUploadTask uploadTask=storageReference.putFile(image);
+    StorageTaskSnapshot taskSnapshot= await uploadTask.onComplete;
+    setState(() {
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text('Uploaded'),));
+      print('complete');
+    });
+
+  }
+
+
+  Future getImage() async {
+    final pickFile = await picker.getImage(source: ImageSource.gallery);
+    setState(() {
+      image = File(pickFile.path);
+    });
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
-
     CollectionReference users = FirebaseFirestore.instance.collection('Place').doc('placeData').collection('AllState');
 
     return Scaffold(
+
       floatingActionButton: FloatingActionButton(
+        backgroundColor: gColor,
         onPressed: (){
 
-          users.doc(placeName).set(Place(placeName: placeName, state: state,city: city,
+
+          users.doc(placeName).set(Place(placeName: placeName, state: dropDownValue,city: city,
           description: desc,wonderful: wonderful, location: location, bestMonth: bestMonth,
           recommend: recommend, hostel: hostel).toMap());
-
-          insertDatabase(Place(placeName: placeName, state: state,
-          city: city, description: desc, wonderful: wonderful, location: location,bestMonth: bestMonth,
-            recommend: recommend,hostel: hostel
-          ));
-          Navigator.pushReplacement(
+          uploadPic(context).whenComplete(() => Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (BuildContext context) => AddPlace()));
+                  builder: (BuildContext context) => AddPlace())));
+
+
+
 
         },
         child: Icon(Icons.add),),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 
       appBar: AppBar(
+        backgroundColor: gColor,
         title: Text('သင့်၏ အတွေ့အကြုံကို မျှ၀ေလိုက်ပါ', style: TextStyle(fontSize: 14),),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
+            InkWell(
+              onTap: getImage,
+           child: image==null? Image.asset('images/bagan.jpg', width: 100, height: 100, fit: BoxFit.fill,):
+            Image.file(image, width: 100, height: 100, fit: BoxFit.fill,),
+            ),
             Container(
               margin: EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -82,6 +121,7 @@ class _AddPlaceState extends State<AddPlace> {
                 underline: Container(),
                 isExpanded: true,
                 icon: Icon(Icons.keyboard_arrow_down),
+                iconSize: 30,
                 value: dropDownValue,
                 items: stateList.map((e) => DropdownMenuItem(
                   child: Center(child: Text(e)),
@@ -256,3 +296,5 @@ class _AddPlaceState extends State<AddPlace> {
     );
   }
 }
+
+

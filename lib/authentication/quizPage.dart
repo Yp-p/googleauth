@@ -25,25 +25,36 @@ class _QuizPageState extends State<QuizPage> {
   QuerySnapshot querySnapshot;
   Map<String, dynamic> map={};
 
+  List quizResult=[];
+  Future resultLoad;
 
-  getDoucment() async{
-return await FirebaseFirestore.instance.collection('user').doc('haha').collection('hah1').get();
 
+  getDocument() async{
+    CollectionReference user=FirebaseFirestore.instance.collection('Quiz').doc('QuizData').collection('Data');
+var firebaseList= await  user.get();
+setState(() {
+  quizResult=firebaseList.docs;
+});
+return 'complete';
   }
 
   Place getDataFromSnatshop(DocumentSnapshot documentSnapshot){
     Place place=Place();
-
-
     map=documentSnapshot.data();
+  }
 
-
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    resultLoad=getDocument();
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    getDocument();
 
     FirebaseAuth.instance
         .authStateChanges()
@@ -56,6 +67,7 @@ return await FirebaseFirestore.instance.collection('user').doc('haha').collectio
 
   @override
   Widget build(BuildContext context) {
+    print('rrr ${quizResult}');
 
     CollectionReference user=FirebaseFirestore.instance.collection('Quiz').doc('QuizData').collection('Data');
 
@@ -63,27 +75,27 @@ return await FirebaseFirestore.instance.collection('user').doc('haha').collectio
 
     return Scaffold(
         backgroundColor: Colors.black,
-        body: Center(child: StreamWidget(users: user)));
+        body: Center(child: ItemWidget(data: quizResult,)));
 
     // Center(child: StreamWidget(users: user,))));
 
   }
 }
 
-class StreamWidget extends StatefulWidget {
+class ItemWidget extends StatefulWidget {
 
-  const StreamWidget({
+  const ItemWidget({
     Key key,
-    @required this.users,
+    @required this.data,
   }) : super(key: key);
 
-  final CollectionReference users;
+  final List data;
 
   @override
-  _StreamWidgetState createState() => _StreamWidgetState();
+  _ItemWidgetState createState() => _ItemWidgetState();
 }
 
-class _StreamWidgetState extends State<StreamWidget> {
+class _ItemWidgetState extends State<ItemWidget> {
 
 
   int length=0;
@@ -125,7 +137,7 @@ class _StreamWidgetState extends State<StreamWidget> {
     Future.delayed(threeSecond,(){setState(() {
 
 
-      if(length<9){
+      if(length<widget.data.length-1){
 
         length++;
         rightAnswer='';
@@ -141,204 +153,182 @@ class _StreamWidgetState extends State<StreamWidget> {
 
   }
   List indexList;
+  void get(){
+    indexList = new List<int>.generate(10, (int index) => index); // [0, 1, 4]
+    indexList.shuffle();
+  }
 
 
-@override
+
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    indexList = new List<int>.generate(10, (int index) => index); // [0, 1, 4]
-    indexList.shuffle();
-
-    print(indexList[0]);
+    get();
 
   }
 
   @override
   Widget build(BuildContext context) {
 
+        if(widget.data.length!=0){
+          return new ListView.builder(
+              itemCount: 1 ,
+              itemBuilder: (context,index){
+                var document=widget.data[indexList[length]];
 
-  print(indexList);
+                return Container(
 
-    return StreamBuilder<QuerySnapshot>(
-      stream: widget.users.snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                  margin: EdgeInsets.fromLTRB(10, 30, 10, 0),
+                  child: Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text('${document.data()['question']}',textAlign: TextAlign.center , style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold, fontSize: 18,
 
-
-        
-        if (snapshot.hasError) {
-          return Text('Something went wrong');
-        }
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text("Loading");
-        }
-
-        return new ListView.builder(
-            itemCount: 1,
-            itemBuilder: (context,index){
-
-
-
-
-              DocumentSnapshot document;
-
-              document=snapshot.data.docs[indexList[length]];
-              Map a=document.data();
-
-
-
-
-              return Container(
-
-                margin: EdgeInsets.fromLTRB(10, 30, 10, 0),
-                child: Center(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text('${document.data()['question']}',textAlign: TextAlign.center , style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold, fontSize: 18,
-
-                      ),),
-                      SizedBox(height: 60,),
-                      Container(
-                        padding: EdgeInsets.all(10),
-                        width: MediaQuery.of(context).size.width*0.9,
-                        child: RaisedButton(
+                        ),),
+                        SizedBox(height: 60,),
+                        Container(
                           padding: EdgeInsets.all(10),
-                          onPressed: () {
+                          width: MediaQuery.of(context).size.width*0.9,
+                          child: RaisedButton(
+                            padding: EdgeInsets.all(10),
+                            onPressed: () {
 
-                             setState(() {
+                              setState(() {
 
-                              rightAnswer=document.data()['correctAnswer'];
-                              // Vibration.vibrate();
-                              answer(document.data()['correctAnswer'], document.data()['option1']);
-                              countIncre();
+                                rightAnswer=document.data()['correctAnswer'];
+                                // Vibration.vibrate();
+                                answer(document.data()['correctAnswer'], document.data()['option1']);
+                                countIncre();
 
 
+                              }
+                              );
+                            },
+                            elevation: 5,
+                            color: resultColor(document.data()['option1']),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30)
+                            )
+                            ,
+                            child: Text('${document.data()['option1']}', style: TextStyle(
+                                fontSize: 15
+                            ),),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.all(10),
+                          width: MediaQuery.of(context).size.width*0.9,
+                          child: RaisedButton(
+                            padding: EdgeInsets.all(10),
+                            onPressed: () {
+                              setState(() {
+
+                                rightAnswer=document.data()['correctAnswer'];
+                                answer(document.data()['correctAnswer'], document.data()['option2']);
+                                countIncre();
+
+
+
+
+                              });
+                            },
+                            elevation: 5,
+                            color: resultColor(document.data()['option2']),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30)
+                            )
+                            ,
+                            child: Text('${document.data()['option2']}', style: TextStyle(
+                                fontSize: 15
+                            ),),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.all(10),
+                          width: MediaQuery.of(context).size.width*0.9,
+                          child: RaisedButton(
+                            padding: EdgeInsets.all(10),
+                            onPressed: () {
+                              setState(() {
+
+                                rightAnswer=document.data()['correctAnswer'];
+                                answer(document.data()['correctAnswer'], document.data()['option3']);
+                                countIncre();
+                              });
+                            },
+                            elevation: 5,
+                            color: resultColor(document.data()['option3']),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30)
+                            )
+                            ,
+                            child: Text('${document.data()['option3']}', style: TextStyle(
+                                fontSize: 15
+                            ),),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.all(10),
+                          width: MediaQuery.of(context).size.width*0.9,
+                          child: RaisedButton(
+                            padding: EdgeInsets.all(10),
+                            onPressed: () {
+                              setState(() {
+
+                                rightAnswer=document.data()['correctAnswer'];
+                                answer(document.data()['correctAnswer'], document.data()['option4']);
+
+
+
+                                countIncre();
+
+
+                              });
+                            },
+                            elevation: 5,
+                            color: resultColor(document.data()['option4']),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30)
+                            )
+                            ,
+                            child: Text('${document.data()['option4']}', style: TextStyle(
+                                fontSize: 15
+                            ),),
+                          ),
+                        ),
+
+
+                        RaisedButton(
+                          child: Text('Correct- $correctCount and Wrong - $wrongCount'),
+                          onPressed: (){setState(() {
+
+                            if(length<widget.data.length-1){
+                              length++;
+                              rightAnswer='';
                             }
-                            );
-                          },
-                          elevation: 5,
-                          color: resultColor(document.data()['option1']),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30)
-                          )
-                          ,
-                          child: Text('${document.data()['option1']}', style: TextStyle(
-                            fontSize: 15
-                          ),),
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(10),
-                        width: MediaQuery.of(context).size.width*0.9,
-                        child: RaisedButton(
-                          padding: EdgeInsets.all(10),
-                          onPressed: () {
-                            setState(() {
+                            else{
 
-                              rightAnswer=document.data()['correctAnswer'];
-                              answer(document.data()['correctAnswer'], document.data()['option2']);
-                               countIncre();
-
-
-
-
-                            });
-                          },
-                          elevation: 5,
-                          color: resultColor(document.data()['option2']),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30)
-                          )
-                          ,
-                          child: Text('${document.data()['option2']}', style: TextStyle(
-                            fontSize: 15
-                          ),),
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(10),
-                        width: MediaQuery.of(context).size.width*0.9,
-                        child: RaisedButton(
-                          padding: EdgeInsets.all(10),
-                          onPressed: () {
-                            setState(() {
-
-                              rightAnswer=document.data()['correctAnswer'];
-                              answer(document.data()['correctAnswer'], document.data()['option3']);
-                              countIncre();
-                            });
-                          },
-                          elevation: 5,
-                          color: resultColor(document.data()['option3']),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30)
-                          )
-                          ,
-                          child: Text('${document.data()['option3']}', style: TextStyle(
-                            fontSize: 15
-                          ),),
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(10),
-                        width: MediaQuery.of(context).size.width*0.9,
-                        child: RaisedButton(
-                          padding: EdgeInsets.all(10),
-                          onPressed: () {
-                            setState(() {
-
-                              rightAnswer=document.data()['correctAnswer'];
-                              answer(document.data()['correctAnswer'], document.data()['option4']);
-
-
-
-                              countIncre();
-
-
-                            });
-                          },
-                          elevation: 5,
-                          color: resultColor(document.data()['option4']),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30)
-                          )
-                          ,
-                          child: Text('${document.data()['option4']}', style: TextStyle(
-                            fontSize: 15
-                          ),),
-                        ),
-                      ),
-
-
-                      RaisedButton(
-                        child: Text('Correct- $correctCount and Wrong - $wrongCount'),
-                        onPressed: (){setState(() {
-
-                          if(length<snapshot.data.docs.length-1){
-                            length++;
-                            rightAnswer='';
-                          }
-                          else{
-
-                            Navigator.pushReplacement(context, MaterialPageRoute(
-                              builder: (context)=>Result()
-                            ));
-                          }
-                        });},
-                      )
-                    ],
+                              Navigator.pushReplacement(context, MaterialPageRoute(
+                                  builder: (context)=>Result()
+                              ));
+                            }
+                          });},
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              );
-            });
+                );
+              });
+        } return CircularProgressIndicator();
 
 
-      },
-    );
+
+
+
   }
   Widget Result(){
     final audioCache1= AudioCache();
@@ -364,7 +354,7 @@ class _StreamWidgetState extends State<StreamWidget> {
                   padding: EdgeInsets.all(20),
                   decoration: BoxDecoration(
 
-                    border: Border.all(color: gColor,)
+                      border: Border.all(color: gColor,)
                   ),
                   child: Column(
                     children: [

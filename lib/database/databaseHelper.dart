@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:googleauth/const/stringvalue.dart';
 import 'package:googleauth/model/allplaceModel.dart';
 import 'package:path/path.dart';
@@ -58,11 +59,36 @@ class Place {
     };
   }
 
+
+  Place.fromSnapshot(DocumentSnapshot snapshot):
+         placeName= snapshot.data()['placeName'],
+         category = snapshot.data()['category'],
+         state = snapshot.data()['state'],
+         description= snapshot.data()['description'],
+         wonderful = snapshot.data()['wonderful'],
+         bestMonth = snapshot.data()['bestMonth'],
+         location = snapshot.data()['location'],
+         map = snapshot.data()['map'],
+         recommend = snapshot.data()['recommend'],
+         hostel = snapshot.data()['hostel'],
+         image = snapshot.data()['image'],
+         city = snapshot.data()['city'],
+         lat = snapshot.data()['lat'],
+         lon = snapshot.data()['lon'],
+         save= snapshot.data()['save'];
+
+
+
   @override
   String toString() {
     return 'Dog{placeName:$placeName,category:$category, state: $state, description: $description,wonderful:$wonderful, bestMonth: $bestMonth,location: $location,map:$map recommend:$recommend, hostel:$hostel,image:$image, city:$city, lat:$lat, lon:$lon, save:$save}';
   }
 }
+
+
+
+
+
 
 database() async {
   final Future<Database> database = openDatabase(
@@ -80,9 +106,9 @@ database() async {
   return database;
 }
 
-Future<void> insertDatabase(Place place) async {
+Future<void> insertDatabase(Map place) async {
   final Database db = await database();
-  await db.insert('place', place.toMap(),
+  await db.insert('place', place,
       conflictAlgorithm: ConflictAlgorithm.replace);
 }
 
@@ -96,11 +122,39 @@ Future<void> saveUpdate(num save, String placeName) async{
   await db.rawUpdate("UPDATE place set save=? WHERE placeName=?", [save, placeName]);
 }
 
+Future<void> deleteSaveDatabase(String placeName)async{
+  final Database db=await database();
+  await db.rawDelete("DELETE FROM place WHERE placeName=?", [placeName]);
+}
+
+Future<List<Place>> getAllSaveDatabase() async{
+  final Database db= await database();
+  final List<Map<String, dynamic>> maps= await db.query('place');
+  return List.generate(maps.length, (index) {
+    return Place(
+        placeName: maps[index]['placeName'],
+        category: maps[index]['category'],
+        state: maps[index]['state'],
+        description: maps[index]['description'],
+        wonderful: maps[index]['wonderful'],
+        bestMonth: maps[index]['bestMonth'],
+        location: maps[index]['location'],
+        map: maps[index]['maps'],
+        recommend: maps[index]['recommend'],
+        hostel: maps[index]['hostel'],
+        image: maps[index]['image'],
+        city: maps[index]['city'],
+        lat: maps[index]['lat'],
+        lon: maps[index]['lon'],
+        save: maps[index]['save']);
+  });
+}
+
 
 Future<List<Place>> getStatePlaceDatabase(String place) async {
   final Database db = await database();
   final List<Map<String, dynamic>> maps =
-      await db.rawQuery("SELECT * FROM place WHERE state=?", [place]);
+      await db.rawQuery("SELECT * FROM place WHERE state=?", [place,]);
   return List.generate(maps.length, (index) {
     return Place(
         placeName: maps[index]['placeName'],
@@ -186,7 +240,7 @@ var shweDaogon = [
       city: 'ဗဟန်းမြို့',
       lat: '16.7982337',
       lon: '96.1473617',
-      save: 0),
+      save: 1),
   Place(
       placeName: 'ရွှေဆံတော်စေတီတော်',
       category: 'ဘုရား',
@@ -220,5 +274,5 @@ var shweDaogon = [
       city: 'ရွှေသောင်ယံမြို့နယ်',
       lat: '16.9571805',
       lon: '94.4304243',
-      save: 0)
+      save: 1)
 ];

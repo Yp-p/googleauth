@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:googleauth/authentication/anthentication.dart';
 import 'package:googleauth/const/constValue.dart';
+import 'package:googleauth/screen/HomePage.dart';
 import 'package:googleauth/screen/SignUpPage.dart';
 import 'package:googleauth/screen/root_page.dart';
 
@@ -50,7 +51,11 @@ class _LogInPageState extends State<LogInPage> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         backgroundColor: gColor,
-        onPressed: (){},
+        onPressed: (){
+          Navigator.push(context, MaterialPageRoute(
+            builder: (context)=>HomePage()
+          ));
+        },
         child: Text('Skip'),
       ),
       body: SafeArea(
@@ -130,9 +135,9 @@ class _LogInPageState extends State<LogInPage> {
                               print('User is currently signed out!');
                             } else {
                               print('User is signed in!');
-                              Navigator.push(context, MaterialPageRoute(
-                                  builder: (context)=>RootPage()
-                              ));
+                              // Navigator.push(context, MaterialPageRoute(
+                              //     builder: (context)=>RootPage()
+                              // ));
                             }
                           });
                         },
