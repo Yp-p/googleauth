@@ -27,7 +27,8 @@ class MyApp extends StatelessWidget {
         '/' :(context)=> RootPage(),
         '/division':(context)=> Division(),
         '/quiz':(context)=> QuizPage(),
-        '/busPrice' :(context) =>BusPrice()
+        '/busPrice' :(context) =>BusPrice(),
+
       },
 
     );

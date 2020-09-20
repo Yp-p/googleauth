@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:googleauth/authentication/anthentication.dart';
-import 'package:googleauth/database/databaseHelper.dart';
 import 'package:googleauth/screen/HomePage.dart';
 import 'package:googleauth/screen/logInPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -55,24 +54,24 @@ class _RootPageState extends State<RootPage> {
     });
 
   }
-  //
-  // void loginCallback() {
-  //   widget.auth.getCurrentUser().then((user) {
-  //     setState(() {
-  //       _userID = user.uid.toString();
-  //     });
-  //   });
-  //   setState(() {
-  //     authStatus = AuthStatus.LOGGED_IN;
-  //   });
-  // }
-  //
-  // void logoutCallback() {
-  //   setState(() {
-  //     authStatus = AuthStatus.NOT_LOGGED_IN;
-  //     _userID = "";
-  //   });
-  // }
+
+  void loginCallback() {
+    widget.auth.getCurrentUser().then((user) {
+      setState(() {
+        _userID = user.uid.toString();
+      });
+    });
+    setState(() {
+      authStatus = AuthStatus.LOGGED_IN;
+    });
+  }
+
+  void logoutCallback() {
+    setState(() {
+      authStatus = AuthStatus.NOT_LOGGED_IN;
+      _userID = "";
+    });
+  }
 
   Widget buildWaitingScreen() {
     return Scaffold(
@@ -94,7 +93,7 @@ class _RootPageState extends State<RootPage> {
         break;
       case AuthStatus.LOGGED_IN:
         if (_userID.length > 0 && _userID != null) {
-          return new HomePage();
+          return new HomePage(logOutCallback: logoutCallback,);
         } else
           return buildWaitingScreen();
         break;

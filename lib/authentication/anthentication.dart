@@ -1,10 +1,8 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class BaseAuth{
   Future<UserCredential> signIn(String email, String password);
-  Future<UserCredential> SignUp(String email, String password);
+  Future<UserCredential> signUp(String email, String password);
   Future<User> getCurrentUser();
   Future<void> signOut();
   Future<bool> currentSign();
@@ -13,7 +11,7 @@ abstract class BaseAuth{
 class Auth implements BaseAuth{
   FirebaseAuth auth = FirebaseAuth.instance;
   @override
-  Future<UserCredential> SignUp(String email, String password) async{
+  Future<UserCredential> signUp(String email, String password) async{
     try{
       UserCredential userCredential= await auth.createUserWithEmailAndPassword(email: email, password: password);
     } on FirebaseAuthException catch(e){

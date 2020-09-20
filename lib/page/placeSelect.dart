@@ -100,7 +100,7 @@ searchResultList(){
 
   @override
   Widget build(BuildContext context) {
-    final List<PlaceModel> _divisionList =map[widget.divName];
+
 
 
     return Scaffold(

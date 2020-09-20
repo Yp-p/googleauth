@@ -21,14 +21,15 @@ class AddPlace extends StatefulWidget {
 String dropDownValue=stateList[0];
 
 class _AddPlaceState extends State<AddPlace> {
-  String placeName, state, city, desc,wonderful, location, bestMonth, recommend, hostel;
+  String placeName, state, city, desc,wonderful, location, bestMonth, recommend;
+  String phone;
   File image;
   ImagePicker picker=ImagePicker();
 
 
 
   Future uploadPic(BuildContext context) async{
-    StorageReference storageReference=FirebaseStorage.instance.ref().child('placeImage/${placeName}');
+    StorageReference storageReference=FirebaseStorage.instance.ref().child('placeImage/$placeName');
     print(storageReference.getDownloadURL());
     StorageUploadTask uploadTask=storageReference.putFile(image);
     StorageTaskSnapshot taskSnapshot= await uploadTask.onComplete;
@@ -58,15 +59,22 @@ class _AddPlaceState extends State<AddPlace> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: gColor,
         onPressed: (){
-
-
-          users.doc(placeName).set(Place(placeName: placeName, state: dropDownValue,city: city,
-          description: desc,wonderful: wonderful, location: location, bestMonth: bestMonth,
-          recommend: recommend, hostel: hostel).toMap());
-          uploadPic(context).whenComplete(() => Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) => AddPlace())));
+          if(placeName!=null) {
+            users.doc(placeName).set(Place(placeName: placeName,
+                state: dropDownValue,
+                city: city,
+                description: desc,
+                wonderful: wonderful,
+                location: location,
+                bestMonth: bestMonth,
+                recommend: recommend,
+                phone: phone).toMap());
+            uploadPic(context).whenComplete(() =>
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => AddPlace())));
+          }
 
 
 
@@ -275,14 +283,13 @@ class _AddPlaceState extends State<AddPlace> {
                   )
               ),
               child: TextField(
-                maxLines: 5,
-                minLines: 3,
+                onChanged: (value)=>phone=value,
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
 
                     border: InputBorder.none,
 
-                    hintText: 'အနီးအနားတည်းခိုရန်နေရာ'
+                    hintText: 'အရေးပေါ်ဆက်သွယ်ရန် ဖုန်းနံပါတ်'
                 ),
               ),
             ),

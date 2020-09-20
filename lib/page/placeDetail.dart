@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:googleauth/Service/networking.dart';
 import 'package:googleauth/const/constValue.dart';
-import 'package:googleauth/const/stringvalue.dart';
+import 'package:googleauth/const/weather.dart';
 import 'package:googleauth/database/databaseHelper.dart';
-import 'package:googleauth/model/Weather/weather.dart';
 import 'package:googleauth/page/placeHistory.dart';
+import 'package:googleauth/screen/logInPage.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class PlaceDetail extends StatefulWidget {
   final data;
@@ -39,7 +40,7 @@ class _PlaceDetailState extends State<PlaceDetail> {
   }
 
   void getData() async {
-    var data = await Service(lat: widget.data['map'].latitude, lon: widget.data['map'].longitude).getData();
+    var data = await Service(lat: widget.data['lat'], lon: widget.data['lon']).getData();
 
     setState(() {
       weatherData = data;
@@ -129,7 +130,7 @@ class _PlaceDetailState extends State<PlaceDetail> {
                         InkWell(
                             onTap: (){
                               Navigator.push(context, MaterialPageRoute(
-                                builder: (context) =>PlaceHistory()
+                                builder: (context) =>PlaceHistory(data: dataMap,)
                               ));
                             },
                             child: desCard(dataMap['description'])),
@@ -140,18 +141,15 @@ class _PlaceDetailState extends State<PlaceDetail> {
                           dataMap: dataMap,
                         ),
                         DetailWeatherWidget(
-                          temp: temp != null
-                              ? weatherData['temp'].toString()
-                              : '0',
+                          weatherData: weatherData,
                         ),
                         DetailLocationWidget(
                           dataMap: dataMap,
                           map: 'haha',
                         ),
                         DetailRecommedWidget(recommed: dataMap),
-                        DetailHostelWidget(
-                          hostel: 'YPP Hostel',
-                          phone: "hhhh",
+                        ContactWidget(
+                          phone: dataMap['phone'],
                         ),
                       ],
                     ),
@@ -167,10 +165,7 @@ class _PlaceDetailState extends State<PlaceDetail> {
                           bottomRight: Radius.circular(20),
                         ),
                         child: InkWell(
-                          onTap: () {
-                            print(temp);
-                            print(weatherData['temp']);
-                          },
+
                           child: photoUrl == null
                               ? Image.asset(
                                   'images/bagan.jpg',
@@ -238,9 +233,31 @@ Widget desCard(String description) {
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       margin: EdgeInsets.all(10),
-      child: Text(
-        description != null ? description : '',
-        maxLines: 5,
+      child: Container(
+        padding: EdgeInsets.all(10),
+        child: Stack(
+          children: [
+            Text(
+              description != null ? description : '',
+              maxLines: 5,
+            ),
+
+            Positioned(
+
+              bottom: 0,
+              right: 0,
+              child: Container(
+                decoration: BoxDecoration(
+                color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+
+                ),
+               padding: EdgeInsets.symmetric(horizontal: 10),
+
+                  child: Text('အပြည်အစုံဖတ်ရန် >>>', style: TextStyle(color: Colors.blue),)),
+            )
+          ],
+        ),
       ),
     ),
   );
@@ -281,7 +298,7 @@ class DetailWonderfulWidget extends StatelessWidget {
             ),
             Container(
               padding: EdgeInsets.all(10),
-              child: Text(dataMap != null ? dataMap['wonderful'] : ''),
+              child: Text(dataMap['wonderful'] != null ? dataMap['wonderful'] : ''),
             )
           ],
         ),
@@ -324,7 +341,7 @@ class DetailMonthsWidget extends StatelessWidget {
             ),
             Container(
               padding: EdgeInsets.all(10),
-              child: Text(dataMap == null ? '' : dataMap['bestMonth']),
+              child: Text(dataMap['bestMonth']==null||dataMap == null ? '' : dataMap['bestMonth']),
             )
           ],
         ),
@@ -334,17 +351,26 @@ class DetailMonthsWidget extends StatelessWidget {
 }
 
 class DetailWeatherWidget extends StatefulWidget {
-  final String temp;
+  final Map weatherData;
 
-  const DetailWeatherWidget({Key key, this.temp}) : super(key: key);
+  const DetailWeatherWidget({Key key, this.weatherData}) : super(key: key);
 
   @override
   _DetailWeatherWidgetState createState() => _DetailWeatherWidgetState();
 }
 
 class _DetailWeatherWidgetState extends State<DetailWeatherWidget> {
+int temp=0;
+int condition=0;
+
   @override
   Widget build(BuildContext context) {
+if(widget.weatherData.length!=null&& widget.weatherData.length>0){
+    temp=widget.weatherData['main']['temp'];
+     condition=widget.weatherData['weather'][0]['id'];}
+
+
+
     return Card(
       elevation: 3,
       margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
@@ -359,15 +385,10 @@ class _DetailWeatherWidgetState extends State<DetailWeatherWidget> {
                 padding: EdgeInsets.all(10),
                 child: Row(
                   children: [
-                    Text('${widget.temp} °C  ☔'),
-                    Icon(Icons.ac_unit),
+                    Text('$temp °C '),
+                    Text('${WeatherModel().getWeatherIcon(condition)}'),
                     Expanded(
-                      child: Column(
-                        children: [
-                          Text('Weather is Cold'),
-                          Text('Should bring Warm Coat')
-                        ],
-                      ),
+                      child: Center(child: Text('${WeatherModel().getMessage(temp)}', textAlign: TextAlign.center,))
                     )
                   ],
                 ))
@@ -410,7 +431,7 @@ class DetailLocationWidget extends StatelessWidget {
                   GestureDetector(
                       onTap: () {
                         print('hhh');
-                        showUpdateDialog(context, 'ဘာကြောင့်သွားလည်သင့်လဲ',
+                        showUpdateDialog(context, 'နေရာ၏ လိပ်စာထည့်ပါ',
                             dataMap['placeName'], dataMap['location'], 'location');
                       },
                       child: Icon(
@@ -427,7 +448,7 @@ class DetailLocationWidget extends StatelessWidget {
               padding: EdgeInsets.all(10),
               child: Column(
                 children: [
-                  Text(dataMap != null ? dataMap['location'] : ''),
+                  Text(dataMap['location']==null ||dataMap == null? '' : dataMap['location']),
                   FlatButton(
                     onPressed: (){
                       _makeLunchApp('geo: ${dataMap['map'].latitude},${dataMap['map'].longitude}');
@@ -497,15 +518,23 @@ class _DetailRecommedWidgetState extends State<DetailRecommedWidget> {
   }
 }
 
-class DetailHostelWidget extends StatelessWidget {
-  final String hostel;
+class ContactWidget extends StatelessWidget {
+
   final String phone;
 
-  const DetailHostelWidget({Key key, this.hostel, this.phone})
+  const ContactWidget({Key key,this.phone})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    Future<void> _makeLunchApp(String url) async{
+
+      if(await canLaunch(url)){
+        launch(url);
+      }else{
+        throw ('Could not Lauch $url');
+      }
+    }
     return Card(
       elevation: 3,
       margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
@@ -513,26 +542,30 @@ class DetailHostelWidget extends StatelessWidget {
         child: Column(
           children: [
             Container(
+              width: MediaQuery.of(context).size.width,
               color: Color(0xFFA5D6A7),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
+              child:
+                   Center(child: Text('အရေးပေါ်ဆက်သွယ်ရန် ဖုန်းနံပါတ်'))),
 
-                  Text('အနီးအနား တည်ခိုးရန်နေရာ'),
-                  Icon(Icons.keyboard_arrow_down)
-                ],
-              ),
-            ),
             Container(
               padding: EdgeInsets.all(10),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text(hostel),
-                  Text(phone),
-                  Icon(
-                    Icons.map,
-                    color: Colors.green,
+
+                  Text(phone!=null?'$phone':'နံပါတ်မရှိသေးပါ'),
+                  FlatButton(
+                    color: Color(0xFFA5D6A7),
+
+                    onPressed: (){
+                      _makeLunchApp('tel: $phone');
+                    },
+                    child: Icon(
+
+                      Icons.phone_in_talk,
+                      color: Colors.black,
+                      size: 20,
+                    ),
                   )
                 ],
               ),
@@ -546,47 +579,73 @@ class DetailHostelWidget extends StatelessWidget {
 
 void showUpdateDialog(
     BuildContext context, String label, String placeName, String editTextData, String item) async {
-  TextEditingController controller = TextEditingController();
   String editText;
+  FirebaseAuth firebaseAuth=FirebaseAuth.instance;
+  var user=firebaseAuth.currentUser;
 
   await showDialog<String>(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          content: new Row(
-            children: <Widget>[
-              new Expanded(
-                  child: new TextFormField(
-                    initialValue: editTextData,
-                onChanged: (value)=>editText=value,
+        if (user != null) {
+          return AlertDialog(
+            content: new Row(
+              children: <Widget>[
+                new Expanded(
+                    child: new TextFormField(
+                      initialValue: editTextData,
+                      onChanged: (value) => editText = value,
 
 
-                // controller: controller,
-                autofocus: true,
-                decoration: new InputDecoration(
-                  labelText: label,
-                ),
-              ))
+                      // controller: controller,
+                      autofocus: true,
+                      decoration: new InputDecoration(
+                        labelText: label,
+                      ),
+                    ))
+              ],
+            ),
+            actions: <Widget>[
+              new FlatButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }),
+              new FlatButton(
+                  child: const Text('Save'),
+                  onPressed: () async {
+                    CollectionReference users = FirebaseFirestore.instance
+                        .collection('Place')
+                        .doc('placeData')
+                        .collection('AllState');
+                    if (editText != null) {
+                      users.doc(placeName).update({item: editText});
+                    }
+                    Navigator.pop(context);
+                  })
             ],
-          ),
-          actions: <Widget>[
-            new FlatButton(
-                child: const Text('Cancel'),
-                onPressed: () {
-                  Navigator.pop(context);
-                }),
-            new FlatButton(
-                child: const Text('Save'),
-                onPressed: () async {
-                  CollectionReference users = FirebaseFirestore.instance
-                      .collection('Place')
-                      .doc('placeData')
-                      .collection('AllState');
-                 if( editText!=null){
-                  users.doc(placeName).update({item: editText});}
-                  Navigator.pop(context);
-                })
-          ],
+          );
+        }else{
+          return AlertDialog(
+            title: Text('အကောင့် မဝင်ထားသည့်အတွက် မရနိုင်ပါ', style: TextStyle(
+              fontSize: 12
+            ),),
+            actions: [
+              RaisedButton(
+                onPressed: (){
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context)=>LogInPage()
+                  ));
+                },
+                child:Text('အကောင့်ဝင်ရန်') ,
+              ),
+              RaisedButton(
+                onPressed:(){Navigator.pop(context);} ,
+                child: Text('ဟုတ်ပြီး'),
+              )
+            ],
+          );
+        }
+      }
         );
-      });
+
 }

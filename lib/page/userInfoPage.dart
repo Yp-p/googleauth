@@ -14,6 +14,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
 class UserInfo extends StatefulWidget {
+  final VoidCallback logOutCallBack;
+
+  const UserInfo({Key key, this.logOutCallBack}) : super(key: key);
+
   @override
   _UserInfoState createState() => _UserInfoState();
 }
@@ -63,8 +67,9 @@ class _UserInfoState extends State<UserInfo> {
           stream: usersInfo.snapshots(),
           builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
             if (snapshot.hasData) {
-              return userinfoItem(
+              return UserInfoItem(
                 data: snapshot.data.data(),
+                logoutCallback: widget.logOutCallBack,
               );
             }
             return Center(child: CircularProgressIndicator());
@@ -113,16 +118,17 @@ class _UserInfoState extends State<UserInfo> {
   }
 }
 
-class userinfoItem extends StatefulWidget {
+class UserInfoItem extends StatefulWidget {
   final data;
+  final VoidCallback logoutCallback;
 
-  const userinfoItem({Key key, this.data}) : super(key: key);
+  const UserInfoItem({Key key, this.data, this.logoutCallback}) : super(key: key);
 
   @override
-  _userinfoItemState createState() => _userinfoItemState();
+  _UserInfoItemState createState() => _UserInfoItemState();
 }
 
-class _userinfoItemState extends State<userinfoItem> {
+class _UserInfoItemState extends State<UserInfoItem> {
   File image;
   final picker = ImagePicker();
 
@@ -165,14 +171,17 @@ class _userinfoItemState extends State<userinfoItem> {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController controller = TextEditingController();
+
     String textField;
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     DocumentReference updateInfo = FirebaseFirestore.instance
         .collection('UserInfo')
         .doc(firebaseAuth.currentUser.email);
-
     downLoadUserPhoto();
+    if(widget.data==null){
+      updateInfo.set({});
+    }
+
     // firebaseAuth.currentUser.updateProfile(displayName: null);
 
     return SingleChildScrollView(
@@ -247,9 +256,10 @@ class _userinfoItemState extends State<userinfoItem> {
               ),
               ListTile(
                 leading: Icon(Icons.location_city),
-                title: widget.data['city'] != null
-                    ? Text('${widget.data['city']}')
-                    : Text('အချက်အလက်မရှိသေးပါ'),
+                title: widget.data==null || widget.data['city'] == null
+
+                    ?Text('အချက်အလက်မရှိသေးပါ')
+                 :Text('${widget.data['city']}'),
                 trailing: InkWell(
                     onTap: () async {
                       await showDialog(
@@ -290,9 +300,10 @@ class _userinfoItemState extends State<userinfoItem> {
               ),
               ListTile(
                 leading: Icon(Icons.phone_in_talk),
-                title: widget.data['phone'] != null
-                    ? Text('${widget.data['phone']}')
-                    : Text('အချက်အလက်မရှိသေးပါ'),
+                title: widget.data==null || widget.data['phone'] == null
+
+                    ?Text('အချက်အလက်မရှိသေးပါ')
+                    :Text('${widget.data['phone']}'),
                 trailing: InkWell(
                     onTap: () async {
                       await showDialog(
@@ -331,9 +342,10 @@ class _userinfoItemState extends State<userinfoItem> {
               ),
               ListTile(
                 leading: Icon(Icons.supervisor_account),
-                title: widget.data['gender'] != null
-                    ? Text('${widget.data['gender']}')
-                    : Text('အချက်အလက်မရှိသေးပါ'),
+                title: widget.data==null || widget.data['gender'] == null
+
+                    ?Text('အချက်အလက်မရှိသေးပါ')
+                    :Text('${widget.data['gender']}'),
                 trailing: InkWell(
                     onTap: () async {
                       await showDialog(
@@ -372,9 +384,10 @@ class _userinfoItemState extends State<userinfoItem> {
               ),
               ListTile(
                 leading: Icon(Icons.location_city),
-                title: widget.data['age'] != null
-                    ? Text('${widget.data['age']}')
-                    : Text('အချက်အလက်မရှိသေးပါ'),
+                title: widget.data==null || widget.data['age'] == null
+
+                    ?Text('အချက်အလက်မရှိသေးပါ')
+                    :Text('${widget.data['age']}'),
                 trailing: InkWell(
                     onTap: () async {
                       await showDialog(
@@ -431,6 +444,7 @@ class _userinfoItemState extends State<userinfoItem> {
                             FlatButton(
                               onPressed: () {
                                 signout();
+                                Navigator.pop(context);
                                 FirebaseAuth.instance
                                     .authStateChanges()
                                     .listen((User user) {
@@ -439,8 +453,10 @@ class _userinfoItemState extends State<userinfoItem> {
                                   } else {
                                     print('User is signed in!');
                                   }
-                                  Navigator.pop(context);
+
                                 });
+                                widget.logoutCallback;
+
                               },
                               child: Text('ထွက်ပါမည်'),
                             )

@@ -21,13 +21,13 @@ class WeatherModel {
 
   String getMessage(int temp) {
     if (temp > 25) {
-      return 'It\'s 🍦 time';
+      return 'ရာသီဉတု အနည်းငယ်ပူနေပါတယ်။\n 🍦  စားပြီး ခရီးသွားလိုက်ပါ။';
     } else if (temp > 20) {
-      return 'Time for shorts and 👕';
+      return 'ပုံမှန် ရာသီတုအခြေအနေဖြစ်ပါတယ်။ \n ပျော်ရွှင်သော ခရီးစဉ်ဖြစ်ပါစေ။';
     } else if (temp < 10) {
-      return 'You\'ll need 🧣 and 🧤';
+      return 'ရာသီဉတု အရမ်းအေးသည်။\n 🧣 နှင့် 🧤 ကို ယူသွားပါ';
     } else {
-      return 'Bring a 🧥 just in case';
+      return 'ရာသီဉတုအေးသည်။ \n 🧥  ကို ယူသွားပါ';
     }
   }
 }

@@ -182,6 +182,7 @@ class BusItem extends StatefulWidget {
 class _BusItemState extends State<BusItem> {
   @override
   Widget build(BuildContext context) {
+    if(widget.result!=null&&widget.result.length>0){
     return Expanded(
       child: ListView.builder(
           itemCount: widget.result.length,
@@ -204,7 +205,8 @@ class _BusItemState extends State<BusItem> {
             );
           }
       ),
-    );
+    );}
+    return CircularProgressIndicator();
   }
 
 

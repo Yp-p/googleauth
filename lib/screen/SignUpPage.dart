@@ -2,9 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:googleauth/const/constValue.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:googleauth/const/constValue.dart';
-import 'package:googleauth/screen/root_page.dart';
+
 
 class SignUp extends StatefulWidget {
   @override
@@ -12,6 +10,9 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  String errorPassword='';
+  String errorEmail='';
+  bool obscureText=true;
 
   TextEditingController userEmail= TextEditingController();
   TextEditingController userPassowd= TextEditingController();
@@ -25,6 +26,8 @@ class _SignUpState extends State<SignUp> {
   }
   @override
   Widget build(BuildContext context) {
+
+
     Size size= MediaQuery.of(context).size;
     return Scaffold(
       body: SafeArea(
@@ -66,7 +69,7 @@ class _SignUpState extends State<SignUp> {
                           border: InputBorder.none),
                     ),
                   ),
-                  SizedBox(child: Text(''),width: 10,),
+                  SizedBox(child: Text(''),),
 
                   Container(
 
@@ -88,7 +91,9 @@ class _SignUpState extends State<SignUp> {
                           border: InputBorder.none),
                     ),
                   ),
-                  SizedBox(child: Text(''),width: 10,),
+                  SizedBox(child: Text(errorEmail, style: TextStyle(
+                    color: Colors.red, fontSize: 13
+                  ),)),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     width: size.width * 0.8,
@@ -96,18 +101,26 @@ class _SignUpState extends State<SignUp> {
                         border: Border.all(color: gColor),
                         borderRadius: BorderRadius.circular(30)),
                     child: TextField(
+                      obscureText: obscureText,
                       controller: userPassowd,
                       decoration: InputDecoration(
                           icon: Icon(
                             Icons.lock,
                             color: gColor,
                           ),
-                          suffixIcon: Icon(Icons.visibility),
+                          suffixIcon: IconButton(
+                              onPressed: (){setState(() {
+                                obscureText=obscureText==true?false:true;
+                              });},
+                              icon: Icon(Icons.visibility)),
                           hintText: 'Your Password',
                           border: InputBorder.none),
                     ),
                   ),
-                  SizedBox(child: Text(''),width: 10,),
+                  SizedBox(child: Text(errorPassword, style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 15,
+                  ),),),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     width: size.width * 0.8,
@@ -137,20 +150,44 @@ class _SignUpState extends State<SignUp> {
                           style: TextStyle(color: Colors.white),
                         ),
                         color: gColor,
-                        onPressed: () {
-                          signInWithEmail(userEmail.text.toString(), userPassowd.text.toString());
-                          FirebaseAuth.instance
-                              .authStateChanges()
-                              .listen((User user) {
-                            if (user == null) {
-                              print('User is currently signed out!');
-                            } else {
-                              print('User is signed in!');
-                              Navigator.push(context, MaterialPageRoute(
-                                builder: (context)=>RootPage()
-                              ));
-                            }
+                        onPressed: () async{
+
+                          var signUp=await signUpWithEmail(userEmail.text.toString(), userPassowd.text.toString());
+                          print(signUp);
+                          setState(() {
+                            errorEmail= signUp=='email-already-in-use'? 'အသုံးပြုပြီးသား email ဖြစ်ပါသည်':'';
+                            errorPassword= signUp=='weak-password' ? 'password အနည်းဆုံး(၆)လုံးရိုက်ထည့်ပါ':'';
+
+                            // if (signUp == 'weak-password') {
+                            //   errorPassword='password အရမ်းယ်လွန်းသည်';
+                            //   print(errorEmail);
+                            //
+                            //   print('The password provided is too weak.');
+                            // } else if (signUp == 'email-already-in-use') {
+                            //   errorEmail='အသုံးပြုပြီးသား email ဖြစ်ပါသည်';
+                            //   print('The account alrey exists for that email.');
+                            // }else{
+                            //   print(signUp);
+                            //   errorPassword='';
+                            //   errorEmail='';
+                            // }
+
                           });
+
+
+
+                          // FirebaseAuth.instance
+                          //     .authStateChanges()
+                          //     .listen((User user) {
+                          //   if (user == null) {
+                          //     print('User is currently signed out!');
+                          //   } else {
+                          //     print('User is signed in!');
+                          //     Navigator.push(context, MaterialPageRoute(
+                          //       builder: (context)=>RootPage()
+                          //     ));
+                          //   }
+                          // });
 
                         },
                       ),

@@ -89,13 +89,18 @@ class _SavePageState extends State<SavePage> {
                                         padding:EdgeInsets.only(left: 5),
                                         child: ClipRRect(
                                             borderRadius: BorderRadius.circular(10),
-                                            child: Image.network(
-                                              dataMap.image!=null? dataMap.image:'images/bagan.jpg',
+                                            child: dataMap.image!=null?
+                                            Image.network(dataMap.image,
                                               fit: BoxFit.fill,
                                               width: 120,
-                                              height: 110,
+                                              height: 110,)
+                                                :Image.asset('images/bagan.jpg',
+                                              fit: BoxFit.fill,
+                                              width: 120,
+                                              height: 110,),
+
                                             )),
-                                      ),
+
                                       Expanded(
                                         child: Column(
                                           mainAxisAlignment: MainAxisAlignment.center,

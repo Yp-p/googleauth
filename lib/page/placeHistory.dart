@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class PlaceHistory extends StatefulWidget {
+  final Map data;
+
+  const PlaceHistory({Key key, this.data}) : super(key: key);
   @override
   _PlaceHistoryState createState() => _PlaceHistoryState();
 }
 
 class _PlaceHistoryState extends State<PlaceHistory> {
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -28,7 +32,7 @@ class _PlaceHistoryState extends State<PlaceHistory> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('ရွှေတိဂုံစေတီတော်', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+                        Text('${widget.data['placeName']}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
                         Text('သမိုင်းအကျဉ်း'),
 
                       ],
@@ -39,7 +43,7 @@ class _PlaceHistoryState extends State<PlaceHistory> {
 
               Divider(thickness: 2,),
               Text('မူရင်းရေးသားသူ = WiKi Myanmar'),
-              Text('')
+              Text('${widget.data['description']}')
             ],
           ),
         ),

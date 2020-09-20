@@ -18,6 +18,8 @@ class LogInPage extends StatefulWidget {
 class _LogInPageState extends State<LogInPage> {
   TextEditingController useremail=TextEditingController();
   TextEditingController userpassword= TextEditingController();
+  String errorEmail='';
+  String errorPassword='';
 
   BaseAuth baseAuth;
 
@@ -44,7 +46,6 @@ class _LogInPageState extends State<LogInPage> {
 
   @override
   Widget build(BuildContext context) {
-
 
     Size size = MediaQuery.of(context).size;
 
@@ -75,7 +76,7 @@ class _LogInPageState extends State<LogInPage> {
                   ),
 
                   Container(
-                    margin: EdgeInsets.symmetric(vertical: 10),
+                    // margin: EdgeInsets.symmetric(vertical: 10),
                     width: size.width * 0.8,
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(
@@ -93,6 +94,10 @@ class _LogInPageState extends State<LogInPage> {
                           border: InputBorder.none),
                     ),
                   ),
+                  SizedBox(child: Text(errorEmail, style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 13
+                  ),),),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     width: size.width * 0.8,
@@ -100,6 +105,7 @@ class _LogInPageState extends State<LogInPage> {
                         border: Border.all(color: gColor),
                         borderRadius: BorderRadius.circular(30)),
                     child: TextField(
+                      obscureText: true,
                      controller: userpassword,
                       decoration: InputDecoration(
                           icon: Icon(
@@ -111,6 +117,10 @@ class _LogInPageState extends State<LogInPage> {
                           border: InputBorder.none),
                     ),
                   ),
+                  SizedBox(child: Text(errorPassword, style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 13
+                  ),),),
                   Container(
                     margin: EdgeInsets.all(10),
                     height: 40,
@@ -123,10 +133,28 @@ class _LogInPageState extends State<LogInPage> {
                           style: TextStyle(color: Colors.white),
                         ),
                         color: gColor,
-                        onPressed: () {
+                        onPressed: () async{
                           // print(useremail.value.toString());
 
-                          loginwithEmail(useremail.text.toString(), userpassword.text.toString());
+                          String error= await loginwithEmail(useremail.text.toString(), userpassword.text.toString());
+                          setState(() {
+                            if(error=='invalid-email'){
+                              errorEmail='email ပုံစံမှားနေပါသည်';
+                            }else if(errorEmail=='user-not-found'){
+                              errorEmail='email မှားနေပါသည်။';
+                            }else{ errorEmail='';}
+
+                            errorPassword = error=='wrong-password'? 'လျှို့ဝှတ်နံပါတ် မှားယွင်းနေပါသည်။':'';
+                            print(error);
+                          });
+
+                          // if (e.code == 'user-not-found') {
+                          //   error=e.code;
+                          //   print('No user found for that email.');
+                          // } else if (e.code == 'wrong-password') {
+                          //   error=e.code;
+                          //   print('Wrong password provided for that user.');
+                          // }
 
                           FirebaseAuth.instance
                               .authStateChanges()

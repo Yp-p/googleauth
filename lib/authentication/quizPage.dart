@@ -303,7 +303,7 @@ class _ItemWidgetState extends State<ItemWidget> {
 
 
                         RaisedButton(
-                          child: Text('Correct- $correctCount and Wrong - $wrongCount'),
+                          child: Text('အဖြေမှန်- $correctCount နှင့် အဖြေမှား - $wrongCount'),
                           onPressed: (){setState(() {
 
                             if(length<widget.data.length-1){

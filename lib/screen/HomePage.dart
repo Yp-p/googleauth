@@ -1,21 +1,19 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:googleauth/authentication/cloudfirestore/ColudFireStroeUpdate.dart';
-import 'package:googleauth/authentication/quizPage.dart';
 import 'package:googleauth/const/constValue.dart';
 import 'package:googleauth/page/CategoryPage.dart';
-import 'package:googleauth/page/addFireStore.dart';
-import 'package:googleauth/page/divisionPage.dart';
 import 'package:googleauth/page/firstPage.dart';
 import 'package:googleauth/page/savePage.dart';
 import 'package:googleauth/page/userInfoPage.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-// import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
+  final VoidCallback logOutCallback;
+
+  const HomePage({Key key, this.logOutCallback}) : super(key: key);
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -28,12 +26,16 @@ String _phone;
 
 
   int _selectIndex = 0;
-  static List<Widget> _widgetOption = <Widget>[
-    FirstPage(),
-    SavePage(),
-    CategoryItem(),
-    UserInfo(),
-  ];
+  List widgetList(){
+    List<Widget> _widgetOption = <Widget>[
+      FirstPage(),
+      SavePage(),
+      CategoryItem(),
+      UserInfo(logOutCallBack: widget.logOutCallback,),
+    ];
+    return _widgetOption;
+  }
+
 
   void _onItemTapped(int index) {
     setState(() {
@@ -85,7 +87,7 @@ String _phone;
         elevation: 0,
         // iconTheme: IconThemeData(color: gColor),
       ),
-      body: _widgetOption.elementAt(_selectIndex),
+      body: widgetList().elementAt(_selectIndex),
       drawer: Drawer(
         elevation: 10,
         child: ListView(
