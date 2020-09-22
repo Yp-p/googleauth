@@ -92,10 +92,10 @@ class Place {
 
 database() async {
   final Future<Database> database = openDatabase(
-    join(await getDatabasesPath(), 'place_database11111.db'),
+    join(await getDatabasesPath(), 'place_databasee.db'),
     onCreate: (db, version) async{
       await db.execute(
-          "CREATE TABLE place(placeName TEXT PRIMARY KEY,category TEXT, state TEXT, description TEXT, wonderful TEXT, bestMonth TEXT, location TEXT, map TEXT, recommend TEXT, phone TEXT, image TEXT, city TEXT, lat TEXT, lon TEXT, save NUM)");
+          "CREATE TABLE place(placeName TEXT PRIMARY KEY,category TEXT, state TEXT, description TEXT, wonderful TEXT, bestMonth TEXT, location TEXT, map TEXT, recommend TEXT, phone TEXT, image TEXT, city TEXT, lat NUM, lon NUM, save NUM)");
       for(var data in shweDaogon){
     await db.insert('place', data.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
   }
