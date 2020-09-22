@@ -451,7 +451,7 @@ class DetailLocationWidget extends StatelessWidget {
                   Text(dataMap['location']==null ||dataMap == null? '' : dataMap['location']),
                   FlatButton(
                     onPressed: (){
-                      _makeLunchApp('geo: ${dataMap['map'].latitude},${dataMap['map'].longitude}');
+                      _makeLunchApp('geo: ${dataMap['lat']},${dataMap['lon']}');
                     },
                     child: Text(
                       'Google Map Location',
