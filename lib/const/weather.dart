@@ -19,7 +19,7 @@ class WeatherModel {
     }
   }
 
-  String getMessage(int temp) {
+  String getMessage(num temp) {
     if (temp > 25) {
       return 'ရာသီဉတု အနည်းငယ်ပူနေပါတယ်။\n 🍦  စားပြီး ခရီးသွားလိုက်ပါ။';
     } else if (temp > 20) {

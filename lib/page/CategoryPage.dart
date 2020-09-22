@@ -29,7 +29,7 @@ class CategoryItem extends StatelessWidget {
         catID: '/busPrice',
         title: 'ယာဉ်စီးခများ',
         descrip: 'ခရီးသွားခြင်းဖြင့် သင့်ရဲ့ ပျော်ရွှင်မှုတွေကို ဖန်တီးလိုက်ပါ',
-        image: 'images/bagan.jpg'
+        image: 'images/bus.png'
     )
   ];
 

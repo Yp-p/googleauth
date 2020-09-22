@@ -14,9 +14,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
 class UserInfo extends StatefulWidget {
-  final VoidCallback logOutCallBack;
 
-  const UserInfo({Key key, this.logOutCallBack}) : super(key: key);
 
   @override
   _UserInfoState createState() => _UserInfoState();
@@ -29,14 +27,19 @@ class _UserInfoState extends State<UserInfo> {
 
   FirebaseAuth auth = FirebaseAuth.instance;
 
+  aa(){
+    print('iiii${auth.currentUser}');
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    aa();
     FirebaseAuth auth = FirebaseAuth.instance;
 
     if (auth.currentUser != null) {
-      print('${auth.currentUser}');
+      print('iiii${auth.currentUser}');
     }
 
     FirebaseFirestore.instance
@@ -69,7 +72,6 @@ class _UserInfoState extends State<UserInfo> {
             if (snapshot.hasData) {
               return UserInfoItem(
                 data: snapshot.data.data(),
-                logoutCallback: widget.logOutCallBack,
               );
             }
             return Center(child: CircularProgressIndicator());
@@ -120,9 +122,8 @@ class _UserInfoState extends State<UserInfo> {
 
 class UserInfoItem extends StatefulWidget {
   final data;
-  final VoidCallback logoutCallback;
 
-  const UserInfoItem({Key key, this.data, this.logoutCallback}) : super(key: key);
+  const UserInfoItem({Key key, this.data, }) : super(key: key);
 
   @override
   _UserInfoItemState createState() => _UserInfoItemState();
@@ -437,25 +438,33 @@ class _UserInfoItemState extends State<UserInfoItem> {
                           actions: [
                             FlatButton(
                               onPressed: () {
-                                Navigator.pop(context);
+                                // Navigator.pop(context);
                               },
                               child: Text('မထွက်သေးပါ'),
                             ),
                             FlatButton(
                               onPressed: () {
+                                // Navigator.pop(context);
                                 signout();
-                                Navigator.pop(context);
-                                FirebaseAuth.instance
-                                    .authStateChanges()
-                                    .listen((User user) {
-                                  if (user == null) {
-                                    print('User is currently signed out!');
-                                  } else {
-                                    print('User is signed in!');
-                                  }
+
+
+                                setState(() {
+                                  FirebaseAuth.instance
+                                      .authStateChanges()
+                                      .listen((User user) {
+                                    if (user == null) {
+                                      Navigator.pop(context);
+                                      // Navigator.pushReplacement(context,
+                                      // MaterialPageRoute(
+                                      //   builder: (context)=>RootPage()
+                                      // ));
+                                      print('User is currently signed out!');
+                                    } else {
+                                      print('User is signed in!');
+                                    }
+                                  });
 
                                 });
-                                widget.logoutCallback;
 
                               },
                               child: Text('ထွက်ပါမည်'),
@@ -464,8 +473,7 @@ class _UserInfoItemState extends State<UserInfoItem> {
                         );
                       });
                   // signout();
-                  // Navigator.push(context, MaterialPageRoute(builder:
-                  // (context)=>LogInPage()));
+
                 },
                 child: Text('အကောင့်မှ ထွက်ရန်'),
                 color: Colors.green.shade200,

@@ -263,7 +263,11 @@ class SocialIcon extends StatelessWidget {
         child: SvgPicture.asset('images/phone.svg'),
       ),
       GestureDetector(
-        onTap: (){signInWithGoogle();},
+        onTap: (){
+          signInWithGoogle();
+
+          // FirebaseAuth.instance.authStateChanges().listen((event) {print('hhh$event');});
+          },
         
         child: Container(
           padding: EdgeInsets.all(10),

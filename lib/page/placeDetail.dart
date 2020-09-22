@@ -360,7 +360,7 @@ class DetailWeatherWidget extends StatefulWidget {
 }
 
 class _DetailWeatherWidgetState extends State<DetailWeatherWidget> {
-int temp=0;
+num temp=0;
 int condition=0;
 
   @override

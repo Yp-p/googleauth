@@ -59,6 +59,11 @@ class _AddPlaceState extends State<AddPlace> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: gColor,
         onPressed: (){
+
+          for(var data in firebaseAddItem){
+            users.doc(data.placeName).set(data.toMap());
+          }
+
           if(placeName!=null) {
             users.doc(placeName).set(Place(placeName: placeName,
                 state: dropDownValue,

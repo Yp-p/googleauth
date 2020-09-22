@@ -11,9 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 
 class HomePage extends StatefulWidget {
-  final VoidCallback logOutCallback;
 
-  const HomePage({Key key, this.logOutCallback}) : super(key: key);
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -31,7 +29,7 @@ String _phone;
       FirstPage(),
       SavePage(),
       CategoryItem(),
-      UserInfo(logOutCallBack: widget.logOutCallback,),
+      UserInfo(),
     ];
     return _widgetOption;
   }

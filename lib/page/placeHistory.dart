@@ -17,34 +17,36 @@ class _PlaceHistoryState extends State<PlaceHistory> {
       child: Scaffold(
         body: Container(
           margin: EdgeInsets.all(10),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
 
-              Row(
-                children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
+                Row(
+                  children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
 
-                    child: Image.asset('images/shwedagon.jpeg', width: 100,height: 100, fit: BoxFit.cover,)),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('${widget.data['placeName']}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
-                        Text('သမိုင်းအကျဉ်း'),
+                      child: Image.asset('images/shwedagon.jpeg', width: 100,height: 100, fit: BoxFit.cover,)),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('${widget.data['placeName']}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+                          Text('သမိုင်းအကျဉ်း'),
 
-                      ],
-                    ),
-                  )
-                ],
-              ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
 
-              Divider(thickness: 2,),
-              Text('မူရင်းရေးသားသူ = WiKi Myanmar'),
-              Text('${widget.data['description']}')
-            ],
+                Divider(thickness: 2,),
+                Text('မူရင်းရေးသားသူ = WiKi Myanmar'),
+                Text('${widget.data['description']}')
+              ],
+            ),
           ),
         ),
       ),

@@ -87,7 +87,9 @@ flutter:
     - images/division/shan.jpg
     - images/division/chin.jpg
     - images/quizlogo.png
+    - images/bus.png
     - assets/
+    -
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -1,67 +1,39 @@
 import 'package:firebase_auth/firebase_auth.dart';
-
 abstract class BaseAuth{
-  Future<UserCredential> signIn(String email, String password);
-  Future<UserCredential> signUp(String email, String password);
-  Future<User> getCurrentUser();
+  Future<String> SignIn(String email, String password);
+  Future<String> SignUp(String email, String password);
   Future<void> signOut();
-  Future<bool> currentSign();
+  Future<User> getCurrentUser();
 }
 
-class Auth implements BaseAuth{
-  FirebaseAuth auth = FirebaseAuth.instance;
+class Auth extends BaseAuth {
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   @override
-  Future<UserCredential> signUp(String email, String password) async{
-    try{
-      UserCredential userCredential= await auth.createUserWithEmailAndPassword(email: email, password: password);
-    } on FirebaseAuthException catch(e){
-      if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
-      } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
-      }
-    } catch (e) {
-      print(e.toString());
-    }
+  Future<String> SignIn(String email, String password) async {
+    var result = await _firebaseAuth.signInWithEmailAndPassword(
+        email: email, password: password);
+    FirebaseUser user = result.user;
+    return user.uid;
+  }
+
+
+  @override
+  Future<void> signOut() async {
+    return _firebaseAuth.signOut();
   }
 
   @override
-  Future<User> getCurrentUser() async{
-    User user = auth.currentUser;
+  Future<String> SignUp(String email, String password) async {
+    var result = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: email, password: password);
+    User user = result.user;
+    return user.uid;
+  }
+
+  @override
+  Future<User> getCurrentUser() async {
+    User user = await _firebaseAuth.currentUser;
     return user;
   }
-
-  @override
-  Future<UserCredential> signIn(String email, String password) async{
-   try{
-     UserCredential userCredential= await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
-   } on FirebaseAuthException catch(e){
-     if (e.code == 'user-not-found') {
-       print('No user found for that email.');
-     } else if (e.code == 'wrong-password') {
-       print('Wrong password provided for that user.');
-     }
-   }
-  }
-
-  @override
-  Future<void> signOut() async{
-    // TODO: implement signOut
-    return await FirebaseAuth.instance.signOut();
-  }
-
-  @override
-  Future<bool> currentSign() {
-    FirebaseAuth.instance
-        .authStateChanges()
-        .listen((User user) {
-      if (user == null) {
-        print('User is currently signed out!');
-      } else {
-        print('User is signed in!');
-      }
-    });
-  }
-
 }
-

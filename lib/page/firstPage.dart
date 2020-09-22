@@ -15,53 +15,50 @@ class FirstPage extends StatelessWidget {
     return Scaffold(
           body: Column(
             children: [
-
-
-
-              Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
-
-                ),
-                margin: EdgeInsets.all(10),
-
-                child: Container(
-
-                  width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.all(10),
-
-
-                  child: Center(
-                    child: SizedBox(
-
-                    child: ScaleAnimatedTextKit(
-                      totalRepeatCount: 300,
-                      duration: Duration(seconds: 3),
-                    onTap: () {
-                        Navigator.pushNamed(context, '/quiz');
-                    print("Tap Event");
-                    },
-                    text: [
-
-                    "မြန်မာနိုင်ငံအကြောင်း ဘယ်လောက်သိလဲ...",
-                      "မေးခွန်းလေးတွေဖြေကြည့်ရန်",
-                      "ဒီနေရာကိုနှိပ်ပါ"
-                    ],
-                    textStyle: TextStyle(
-                    fontSize: 17.0,
-                    // color: gColor,
-                    fontFamily: "Bobbers"
-                    ),
-                      isRepeatingAnimation: true,
-                    textAlign: TextAlign.center,
-                    alignment: AlignmentDirectional.topStart // or Alignment.topLeft
-                    ),
-                    ),
-                  ),
-                  // child: ,
-                ),
-              ),
+              // Card(
+              //   elevation: 5,
+              //   shape: RoundedRectangleBorder(
+              //     borderRadius: BorderRadius.circular(50),
+              //
+              //   ),
+              //   margin: EdgeInsets.all(10),
+              //
+              //   child: Container(
+              //
+              //     width: MediaQuery.of(context).size.width,
+              //     margin: EdgeInsets.all(10),
+              //
+              //
+              //     child: Center(
+              //       child: SizedBox(
+              //
+              //       child: ScaleAnimatedTextKit(
+              //         totalRepeatCount: 300,
+              //         duration: Duration(seconds: 3),
+              //       onTap: () {
+              //           Navigator.pushNamed(context, '/quiz');
+              //       print("Tap Event");
+              //       },
+              //       text: [
+              //
+              //       "မြန်မာနိုင်ငံအကြောင်း ဘယ်လောက်သိလဲ...",
+              //         "မေးခွန်းလေးတွေဖြေကြည့်ရန်",
+              //         "ဒီနေရာကိုနှိပ်ပါ"
+              //       ],
+              //       textStyle: TextStyle(
+              //       fontSize: 17.0,
+              //       // color: gColor,
+              //       fontFamily: "Bobbers"
+              //       ),
+              //         isRepeatingAnimation: true,
+              //       textAlign: TextAlign.center,
+              //       alignment: AlignmentDirectional.topStart // or Alignment.topLeft
+              //       ),
+              //       ),
+              //     ),
+              //     // child: ,
+              //   ),
+              // ),
               Slider(),
               Description()
 
