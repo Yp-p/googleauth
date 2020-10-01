@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:googleauth/authentication/anthentication.dart';
 import 'package:googleauth/screen/HomePage.dart';
+import 'package:googleauth/screen/LogInLogOutPage.dart';
 import 'package:googleauth/screen/logInPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -76,7 +77,7 @@ class _RootPageState extends State<RootPage> {
         return buildWaitingScreen();
         break;
       case AuthStatus.NOT_LOGGED_IN:
-        return new LogInPage();
+        return new LoginLogoutPage();
         break;
       case AuthStatus.LOGGED_IN:
         if (_userId.length > 0 && _userId != null) {

@@ -96,6 +96,9 @@ setState(() {
       child: Scaffold(
         body: Column(
           children: [
+            Container(
+                margin: EdgeInsets.all(10),
+                child: Text('အောက်ပါယာဉ်စီးခစျေးနှုန်းများသည် ခန့်မှန်းစျေးနှုန်းများဖြစ်သည်။')),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,

@@ -1,11 +1,16 @@
+import 'dart:io';
+
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:googleauth/const/constValue.dart';
+import 'package:googleauth/dark_mode/dark_setting.dart';
 import 'package:googleauth/page/CategoryPage.dart';
 import 'package:googleauth/page/firstPage.dart';
 import 'package:googleauth/page/savePage.dart';
 import 'package:googleauth/page/userInfoPage.dart';
+import 'package:provider/provider.dart';
+import 'package:rate_my_app/rate_my_app.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -18,8 +23,59 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
+  RateMyApp _rateMyApp = RateMyApp(
+    preferencesPrefix: 'rateMyApp_',
+    minDays: 7,
+    minLaunches: 10,
+    remindDays: 7,
+    remindLaunches: 10,
+    googlePlayIdentifier: "com.ypp.googleauth",
+  );
+
+  rateMyApp(){
+    _rateMyApp.init().then((_){
+      // if(_rateMyApp.shouldOpenDialog){
+        _rateMyApp.showStarRateDialog(
+          context,
+          title: 'အဆင့်သတ်မှတ်ပေးပါ', // The dialog title.
+          message: 'App သုံးရတာ အဆင်ပြေရဲ့လား။', // The dialog message.
+          // contentBuilder: (context, defaultContent) => content, // This one allows you to change the default dialog content.
+          actionsBuilder: (context, stars) { // Triggered when the user updates the star rating.
+            return [ // Return a list of actions (that will be shown at the bottom of the dialog).
+              FlatButton(
+                child: Text('OK'),
+                onPressed: () async {
+                  print('Thanks for the ' + (stars == null ? '0' : stars.round().toString()) + ' star(s) !');
+                  // You can handle the result as you want (for instance if the user puts 1 star then open your contact page, if he puts more then open the store page, etc...).
+                  // This allows to mimic the behavior of the default "Rate" button. See "Advanced > Broadcasting events" for more information :
+                  await _rateMyApp.callEvent(RateMyAppEventType.rateButtonPressed);
+                  Navigator.pop<RateMyAppDialogButton>(context, RateMyAppDialogButton.rate);
+                },
+              ),
+            ];
+          },
+          ignoreNativeDialog: Platform.isAndroid, // Set to false if you want to show the Apple's native app rating dialog on iOS or Google's native app rating dialog (depends on the current Platform).
+          dialogStyle: DialogStyle( // Custom dialog styles.
+            titleAlign: TextAlign.center,
+            messageAlign: TextAlign.center,
+            messagePadding: EdgeInsets.only(bottom: 20),
+          ),
+          starRatingOptions: StarRatingOptions(
+            starsBorderColor: gColor,
+            starsFillColor: gColor
+          ), // Custom star bar rating options.
+          onDismissed: () => _rateMyApp.callEvent(RateMyAppEventType.laterButtonPressed), // Called when the user dismissed the dialog (either by taping outside or by pressing the "back" button).
+        );
+      // }
+    });
+
+  }
+
+
+
 Future<void> _lunch;
 String _phone;
+bool isDark=false;
 
 
 
@@ -50,6 +106,12 @@ String _phone;
     }
 }
 
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // rateMyApp();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,16 +160,37 @@ String _phone;
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
+                  // Text('Developer By', style: TextStyle(fontSize: 10),),
                   ClipRRect(
-                    child: Image.asset('images/division/sagaing.jpg',width: 100, height: 100,fit: BoxFit.cover,),
+                    child: Image.asset('images/bagan.jpg',width: 100, height: 100,fit: BoxFit.cover,),
                     borderRadius: BorderRadius.circular(100),
 
                   ),
+
+                  Text('Developer by', style: TextStyle(fontSize: 12),),
                   Text('Yan Paing Phyo', style: TextStyle(fontSize: 18),),
-                  Text('yanpaingphyoeypp@gmail.com', style: TextStyle(fontSize: 12),)
                 ],
               )
             ),
+
+
+            ListTile(
+              onTap: (){
+
+              },
+              leading: Icon(Icons.brightness_4),
+              title: Text('Dark Mode'),
+              trailing: Switch(
+                value: isDark,
+                onChanged: (value){
+                  setState(() {
+                    isDark=value;
+                  });
+                  Provider.of<DarkSetting>(context, listen: false).switchTheme();
+                },
+              ),
+            ),
+            Divider(),
             ListTile(
               onTap: (){
 
@@ -124,12 +207,14 @@ String _phone;
 
               leading: Icon(Icons.stars),
               title: Text('အဆင့်သတ်မှတ်ပေးမည်'),
+
+              onTap: rateMyApp,
             ),
             Divider(),
             ListTile(
               onTap: (){
-                Share.share('jj',
-                    subject: 'jj',
+                Share.share('https://play.google.com/store/apps/details?id=com.ypp.googleauth',
+                    subject: 'https://play.google.com/store/apps/details?id=com.ypp.googleauth',
                     );
 
               },

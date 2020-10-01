@@ -2,9 +2,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:googleauth/const/constValue.dart';
+import 'package:googleauth/provider/loginoutprovider.dart';
+import 'package:provider/provider.dart';
 
 
 class SignUp extends StatefulWidget {
+
   @override
   _SignUpState createState() => _SignUpState();
 }
@@ -47,28 +50,28 @@ class _SignUpState extends State<SignUp> {
                   ),
                   Container(
                     margin: EdgeInsets.all(10),
-                    child: Text('Creat New Account', style: TextStyle(fontSize:20, fontWeight: FontWeight.bold,
+                    child: Text('အကောင့်အသစ်ဖန်တီးလိုက်ပါ...', style: TextStyle(fontSize:20, fontWeight: FontWeight.bold,
                     fontStyle: FontStyle.italic),),
                   ),
-                  Container(
-
-                    width: size.width * 0.8,
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        // color: gColor,
-                        border: Border.all(color: gColor)),
-                    child: TextField(
-
-                      decoration: InputDecoration(
-                          icon: Icon(
-                            Icons.perm_contact_calendar,
-                            color: gColor,
-                          ),
-                          hintText: 'Your Name',
-                          border: InputBorder.none),
-                    ),
-                  ),
+                  // Container(
+                  //
+                  //   width: size.width * 0.8,
+                  //   padding: EdgeInsets.symmetric(horizontal: 10),
+                  //   decoration: BoxDecoration(
+                  //       borderRadius: BorderRadius.circular(30),
+                  //       // color: gColor,
+                  //       border: Border.all(color: gColor)),
+                  //   child: TextField(
+                  //
+                  //     decoration: InputDecoration(
+                  //         icon: Icon(
+                  //           Icons.perm_contact_calendar,
+                  //           color: gColor,
+                  //         ),
+                  //         hintText: 'Your Name',
+                  //         border: InputBorder.none),
+                  //   ),
+                  // ),
                   SizedBox(child: Text(''),),
 
                   Container(
@@ -87,7 +90,7 @@ class _SignUpState extends State<SignUp> {
                             Icons.email,
                             color: gColor,
                           ),
-                          hintText: 'Your Email',
+                          hintText: 'သင့်၏ email ထည့်ပါ',
                           border: InputBorder.none),
                     ),
                   ),
@@ -113,7 +116,7 @@ class _SignUpState extends State<SignUp> {
                                 obscureText=obscureText==true?false:true;
                               });},
                               icon: Icon(Icons.visibility)),
-                          hintText: 'Your Password',
+                          hintText: 'လျှို့ဝှတ်နံပါထည့်ပါ',
                           border: InputBorder.none),
                     ),
                   ),
@@ -121,36 +124,37 @@ class _SignUpState extends State<SignUp> {
                     color: Colors.red,
                     fontSize: 15,
                   ),),),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    width: size.width * 0.8,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: gColor),
-                        borderRadius: BorderRadius.circular(30)),
-                    child: TextField(
-                      decoration: InputDecoration(
-                          icon: Icon(
-                            Icons.lock,
-                            color: gColor,
-                          ),
-                          suffixIcon: Icon(Icons.visibility),
-                          hintText: 'Confirm Password',
-                          border: InputBorder.none),
-                    ),
-                  ),
+                  // Container(
+                  //   padding: EdgeInsets.symmetric(horizontal: 10),
+                  //   width: size.width * 0.8,
+                  //   decoration: BoxDecoration(
+                  //       border: Border.all(color: gColor),
+                  //       borderRadius: BorderRadius.circular(30)),
+                  //   child: TextField(
+                  //     decoration: InputDecoration(
+                  //         icon: Icon(
+                  //           Icons.lock,
+                  //           color: gColor,
+                  //         ),
+                  //         suffixIcon: Icon(Icons.visibility),
+                  //         hintText: 'Confirm Password',
+                  //         border: InputBorder.none),
+                  //   ),
+                  // ),
                   Container(
                     margin: EdgeInsets.all(10),
                     height: 40,
-                    width: size.width * 0.4,
+                    width: size.width * 0.6,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(30),
                       child: FlatButton(
                         child: Text(
-                          'Sign Up',
+                          'အကောင့်ဆောက်မည်',
                           style: TextStyle(color: Colors.white),
                         ),
                         color: gColor,
                         onPressed: () async{
+
 
                           var signUp=await signUpWithEmail(userEmail.text.toString(), userPassowd.text.toString());
                           print(signUp);
@@ -200,16 +204,29 @@ class _SignUpState extends State<SignUp> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Already have account?",
+                        "အကောင့်ရှိပြီးသားလား ဖြစ်ပါက",
                         style:
                         TextStyle(color: Colors.green, fontSize: 13),
                       ),
+                      SizedBox(width: 10,),
                       GestureDetector(
-                        onTap: (){Navigator.pop(context);},
-                        child: Text(
-                          '  Sign In',
-                          style:
-                          TextStyle(color: Colors.blue, fontSize: 15),
+                        onTap: (){
+
+                          context.read<LoginOutProvider>().changeSign();
+                          // Navigator.pop(context);
+                          },
+                        child: Container(
+                          padding: EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: gColor)
+                          ),
+
+                          child: Text(
+                            'နှိပ်ပါ',
+                            style:
+                            TextStyle(color: Colors.blue, fontSize: 15),
+                          ),
                         ),
                       )
                     ],

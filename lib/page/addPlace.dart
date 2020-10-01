@@ -97,9 +97,10 @@ class _AddPlaceState extends State<AddPlace> {
           children: [
             InkWell(
               onTap: getImage,
-           child: image==null? Image.asset('images/bagan.jpg', width: 100, height: 100, fit: BoxFit.fill,):
+           child: image==null? Icon(Icons.add_a_photo,size: 80,):
             Image.file(image, width: 100, height: 100, fit: BoxFit.fill,),
             ),
+            Text('ပုံထည့်ရန်နှိမ့်ပါ'),
             Container(
               margin: EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -179,10 +180,11 @@ class _AddPlaceState extends State<AddPlace> {
                   )
               ),
               child: TextField(
+                keyboardType: TextInputType.multiline,
                 onChanged: (value)=>desc=value,
                 textAlign: TextAlign.center,
-                minLines: 6,
-                maxLines: 15,
+                minLines: 3,
+                maxLines: 5,
                 decoration: InputDecoration(
 
                     border: InputBorder.none,
@@ -202,8 +204,8 @@ class _AddPlaceState extends State<AddPlace> {
               ),
               child: TextField(
                 onChanged: (value)=>wonderful=value,
-                minLines: 5,
-                maxLines: 15,
+                minLines: 3,
+                maxLines: 5,
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
 
@@ -266,6 +268,7 @@ class _AddPlaceState extends State<AddPlace> {
                   )
               ),
               child: TextField(
+                keyboardType: TextInputType.multiline,
                 onChanged: (value)=>recommend=value,
                 minLines: 3,
                 maxLines: 5,

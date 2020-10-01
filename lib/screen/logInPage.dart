@@ -6,9 +6,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:googleauth/authentication/anthentication.dart';
 import 'package:googleauth/const/constValue.dart';
+import 'package:googleauth/provider/loginoutprovider.dart';
 import 'package:googleauth/screen/HomePage.dart';
 import 'package:googleauth/screen/SignUpPage.dart';
 import 'package:googleauth/screen/root_page.dart';
+import 'package:provider/provider.dart';
 
 class LogInPage extends StatefulWidget {
   @override
@@ -20,6 +22,7 @@ class _LogInPageState extends State<LogInPage> {
   TextEditingController userpassword= TextEditingController();
   String errorEmail='';
   String errorPassword='';
+  bool loginOnpress=false;
 
   BaseAuth baseAuth;
 
@@ -44,8 +47,38 @@ class _LogInPageState extends State<LogInPage> {
 
   }
 
+  Function signInOnPress() {
+
+      return () async {
+        print(useremail.value.toString());
+
+        String error = await loginwithEmail(
+            useremail.text.toString(), userpassword.text.toString());
+        setState(() {
+          if (error == 'invalid-email') {
+            errorEmail = 'email ပုံစံမှားနေပါသည်';
+          } else if (error == 'user-not-found') {
+            errorEmail = 'email မှားနေပါသည်။';
+          } else {
+            errorEmail = '';
+          }
+
+          errorPassword =
+          error == 'wrong-password' ? 'လျှို့ဝှတ်နံပါတ် မှားယွင်းနေပါသည်။' : '';
+          print(error);
+        });
+      };
+
+
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    print(useremail.text);
+
+    loginOnpress=useremail.text!=''?true:false;
 
     Size size = MediaQuery.of(context).size;
 
@@ -53,11 +86,13 @@ class _LogInPageState extends State<LogInPage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: gColor,
         onPressed: (){
-          Navigator.push(context, MaterialPageRoute(
-            builder: (context)=>HomePage()
-          ));
+
+          context.read<LoginOutProvider>().changeWithoutLogIn();
+          // Navigator.push(context, MaterialPageRoute(
+          //   builder: (context)=>HomePage()
+          // ));
         },
-        child: Text('Skip'),
+        child: Text('ကျော်ရန်', style: TextStyle(fontSize: 10),),
       ),
       body: SafeArea(
         child: Center(
@@ -90,7 +125,7 @@ class _LogInPageState extends State<LogInPage> {
                             Icons.email,
                             color: gColor,
                           ),
-                          hintText: 'Your Email',
+                          hintText: 'သင်၏ email',
                           border: InputBorder.none),
                     ),
                   ),
@@ -113,7 +148,7 @@ class _LogInPageState extends State<LogInPage> {
                             color: gColor,
                           ),
                           suffixIcon: Icon(Icons.visibility),
-                          hintText: 'Your Password',
+                          hintText: 'လျှို့ဝှတ်နံပါတ်',
                           border: InputBorder.none),
                     ),
                   ),
@@ -127,20 +162,22 @@ class _LogInPageState extends State<LogInPage> {
                     width: size.width * 0.4,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(30),
-                      child: FlatButton(
+                      child: RaisedButton(
                         child: Text(
-                          'Sign In',
+                          'အကောင့်ဝင်မည်',
                           style: TextStyle(color: Colors.white),
                         ),
                         color: gColor,
-                        onPressed: () async{
-                          // print(useremail.value.toString());
+                        // onPressed: signInOnPress,
+                        onPressed:() async{
+                          print(useremail.value.toString());
 
                           String error= await loginwithEmail(useremail.text.toString(), userpassword.text.toString());
                           setState(() {
+
                             if(error=='invalid-email'){
                               errorEmail='email ပုံစံမှားနေပါသည်';
-                            }else if(errorEmail=='user-not-found'){
+                            }else if(error=='user-not-found'){
                               errorEmail='email မှားနေပါသည်။';
                             }else{ errorEmail='';}
 
@@ -148,13 +185,7 @@ class _LogInPageState extends State<LogInPage> {
                             print(error);
                           });
 
-                          // if (e.code == 'user-not-found') {
-                          //   error=e.code;
-                          //   print('No user found for that email.');
-                          // } else if (e.code == 'wrong-password') {
-                          //   error=e.code;
-                          //   print('Wrong password provided for that user.');
-                          // }
+
 
                           FirebaseAuth.instance
                               .authStateChanges()
@@ -175,22 +206,33 @@ class _LogInPageState extends State<LogInPage> {
                   SizedBox(
                     height: 10,
                   ),
-                  Row(
+                  Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Don't have account?",
+                        "အကောင့်မဖွင့်ရသေးဘူးလား?",
                         style:
                             TextStyle(color: Colors.green, fontSize: 13),
                       ),
                       GestureDetector(
-                        onTap: (){Navigator.push(context,MaterialPageRoute(
-                          builder: (context)=>SignUp()
-                        ));},
-                        child: Text(
-                          '  Sign Up',
-                          style:
-                              TextStyle(color: Colors.blue, fontSize: 15),
+                        onTap: (){
+                          context.read<LoginOutProvider>().changeSign();
+                          print(context.read<LoginOutProvider>().getSign());
+                        //   Navigator.push(context,MaterialPageRoute(
+                        //   builder: (context)=>SignUp()
+                        // ));
+                          },
+                        child: Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: gColor, width: 2)
+                          ),
+                          child: Text(
+                            'အကောင့်အသစ်ဖွင့်ရန်',
+                            style:
+                                TextStyle(color: Colors.blue, fontSize: 15),
+                          ),
                         ),
                       )
                     ],
@@ -239,29 +281,6 @@ class SocialIcon extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     children: [
-      GestureDetector(
-        child: Container(
-          padding: EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            // borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: gColor)
-          ),
-          width: 50,
-          height: 50,
-          child: SvgPicture.asset('images/facebook.svg'),
-        ),
-      ),
-      Container(
-        padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: gColor)
-        ),
-        width: 50,
-        height: 50,
-        child: SvgPicture.asset('images/phone.svg'),
-      ),
       GestureDetector(
         onTap: (){
           signInWithGoogle();

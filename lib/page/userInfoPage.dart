@@ -7,11 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:googleauth/authentication/anthentication.dart';
 import 'package:googleauth/const/constValue.dart';
+import 'package:googleauth/provider/loginoutprovider.dart';
 import 'package:googleauth/screen/logInPage.dart';
 import 'package:googleauth/screen/root_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
+import 'package:provider/provider.dart';
 
 class UserInfo extends StatefulWidget {
 
@@ -102,9 +104,10 @@ class _UserInfoState extends State<UserInfo> {
 
                 child: FlatButton(
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => RootPage()));
-                    FirebaseAuth.instance.authStateChanges();
+                    context.read<LoginOutProvider>().changeWithoutLogIn();
+                    // Navigator.push(context,
+                    //     MaterialPageRoute(builder: (context) => RootPage()));
+                    // FirebaseAuth.instance.authStateChanges();
                   },
                   child: Text(
                     'Log In ဝင်ရန်',
@@ -204,7 +207,9 @@ class _UserInfoItemState extends State<UserInfoItem> {
                                 height: 100,
                               ),
                             )
-                          : Image.asset('images/division/shan.jpg'))),
+                          : Icon(Icons.add_a_photo,size: 70,))),
+
+                    Text('ပုံထည့်ရန်နှိမ့်ပါ'),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

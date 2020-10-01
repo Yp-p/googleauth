@@ -30,6 +30,12 @@ class _PlaceDetailState extends State<PlaceDetail> {
       .doc('placeData')
       .collection('AllState');
 
+  Stream _stream(){
+    return users
+        .where('placeName', isEqualTo: widget.data['placeName'])
+        .snapshots();
+  }
+
   Map<String, dynamic> weatherData = {};
   List<Place> listData;
 
@@ -48,13 +54,20 @@ class _PlaceDetailState extends State<PlaceDetail> {
   }
 
   
-
+@override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    downLoadImage();
+    _stream();
+  }
   @override
   void initState() {
     super.initState();
     getDatail();
     getData();
   }
+
 
   List saveList = [];
   String photoUrl;
@@ -87,9 +100,10 @@ class _PlaceDetailState extends State<PlaceDetail> {
 
     return SafeArea(
       child: StreamBuilder<QuerySnapshot>(
-        stream: users
-            .where('placeName', isEqualTo: widget.data['placeName'])
-            .snapshots(),
+        stream: _stream(),
+        // users
+        //     .where('placeName', isEqualTo: widget.data['placeName'])
+        //     .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           Map dataMap = snapshot.data.docs[0].data();
 
@@ -98,6 +112,8 @@ class _PlaceDetailState extends State<PlaceDetail> {
           return
             Scaffold(
             floatingActionButton: FloatingActionButton(
+
+
                 backgroundColor: Colors.white,
                 onPressed: () {
                   setState(() {
@@ -119,7 +135,7 @@ class _PlaceDetailState extends State<PlaceDetail> {
                         size: 40,
                         color: Colors.red,
                       )),
-            floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+            floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
             body: Stack(
               children: [
                 SingleChildScrollView(
@@ -285,7 +301,7 @@ class DetailWonderfulWidget extends StatelessWidget {
                   GestureDetector(
                       onTap: () {
                         print('hhh');
-                        showUpdateDialog(context, 'ဘာကြောင့်သွားလည်သင့်လဲ',
+                        showUpdateDialog(context, 'ထူးခြားချက်များ',
                             dataMap['placeName'], dataMap['wonderful'], 'wonderful');
                       },
                       child: Icon(
@@ -328,7 +344,7 @@ class DetailMonthsWidget extends StatelessWidget {
                   GestureDetector(
                       onTap: () {
                         print('hhh');
-                        showUpdateDialog(context, 'ဘာကြောင့်သွားလည်သင့်လဲ',
+                        showUpdateDialog(context, 'လည်ပတ်ရန်အကောင်းဆုံးလ',
                             dataMap['placeName'], dataMap['bestMonth'], 'bestMonth');
                       },
                       child: Icon(
@@ -360,8 +376,8 @@ class DetailWeatherWidget extends StatefulWidget {
 }
 
 class _DetailWeatherWidgetState extends State<DetailWeatherWidget> {
-num temp=0;
-int condition=0;
+num temp;
+int condition;
 
   @override
   Widget build(BuildContext context) {
@@ -385,10 +401,10 @@ if(widget.weatherData.length!=null&& widget.weatherData.length>0){
                 padding: EdgeInsets.all(10),
                 child: Row(
                   children: [
-                    Text('$temp °C '),
-                    Text('${WeatherModel().getWeatherIcon(condition)}'),
+                    Text(temp==null?'':'$temp °C '),
+                    Text(condition==null?'':'${WeatherModel().getWeatherIcon(condition)}'),
                     Expanded(
-                      child: Center(child: Text('${WeatherModel().getMessage(temp)}', textAlign: TextAlign.center,))
+                      child: Center(child: Text(temp==null?'အချက်အလက်မရရှိနိုင်သေးပါ':'${WeatherModel().getMessage(temp)}', textAlign: TextAlign.center,))
                     )
                   ],
                 ))
@@ -592,6 +608,9 @@ void showUpdateDialog(
               children: <Widget>[
                 new Expanded(
                     child: new TextFormField(
+                      keyboardType: TextInputType.multiline,
+                      minLines: 1,
+                      maxLines: null,
                       initialValue: editTextData,
                       onChanged: (value) => editText = value,
 

@@ -48,6 +48,11 @@ dependencies:
   share: ^0.6.5
   carousel_pro: ^1.0.0
   carousel_slider: ^2.2.1
+  provider: ^4.3.2+2
+  shared_preferences: ^0.5.12
+  rate_my_app: ^0.7.2
+  splashscreen: ^1.2.0
+
 
 dev_dependencies:
   flutter_test:
@@ -89,7 +94,7 @@ flutter:
     - images/quizlogo.png
     - images/bus.png
     - assets/
-    -
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
